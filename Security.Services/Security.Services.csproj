@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Security.Data\Security.Data.csproj" />
     <ProjectReference Include="..\Security.Objects\Security.Objects.csproj" />
-    <ProjectReference Include="..\..\Shared\SharedObjects\SharedObjects.csproj" />
   </ItemGroup>
 
 </Project>
