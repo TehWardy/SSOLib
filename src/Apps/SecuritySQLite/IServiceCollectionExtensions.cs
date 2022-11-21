@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Models;
 using Security.Data.EF;
 using Security.Data.EF.MSSQL;
 
-namespace Security
+namespace SecuritySQLite
 {
     public static partial class IServiceCollectionExtensions
     {

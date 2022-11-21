@@ -8,7 +8,7 @@ using Security.UserManager;
 using System;
 using System.IO;
 
-namespace Security
+namespace SecuritySQLite
 {
     public class Program
     {
