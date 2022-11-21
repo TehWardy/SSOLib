@@ -3,7 +3,7 @@ using Security.Objects.DTOs;
 using Security.Services.Services.Orchestration.Interfaces;
 using System.Threading.Tasks;
 
-namespace Security.Controllers
+namespace SecurityMSSQL.Controllers
 {
     [Route("/Api/Account")]
     public class AccountController : Controller

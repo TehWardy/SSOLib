@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace Security
+namespace SecurityMSSQL
 {
     public static partial class IServiceCollectionExtensions
     {

@@ -2,14 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Security.Data.EF.MSSQL;
 using Security.Data.EF;
+using Security.Data.EF.MSSQL;
 using Security.UserManager;
 using System;
 using System.IO;
-using System.Configuration;
 
-namespace Security
+namespace SecurityMSSQL
 {
     public class Program
     {

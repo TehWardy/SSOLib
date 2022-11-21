@@ -3,7 +3,7 @@ using Security.Objects.DTOs;
 using Security.Services.Services.Orchestration.Interfaces;
 using System.Threading.Tasks;
 
-namespace Security.Controllers
+namespace SecuritySQLite.Controllers
 {
     [Route("/Api/Account")]
     public class AccountController : Controller

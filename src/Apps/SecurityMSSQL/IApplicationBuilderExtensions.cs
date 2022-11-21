@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.OData;
 using System;
 using System.Security;
 
-namespace Security
+namespace SecurityMSSQL
 {
     public static class IApplicationBuilderExtensions
     {
