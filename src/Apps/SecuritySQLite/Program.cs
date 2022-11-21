@@ -60,11 +60,11 @@ namespace SecuritySQLite
                 services.AddTransient<ISecurityModelBuildProvider, SecuritySQLiteModelBuildProvider>();
 
                 // ? What's the SQLite version of this ?
-                services.AddDistributedSqlServerCache(options => {
-                    options.ConnectionString = configRoot.GetConnectionString("SSO");
-                    options.SchemaName = "dbo";
-                    options.TableName = "Sessions";
-                });
+                //services.AddDistributedSqlServerCache(options => {
+                //    options.ConnectionString = configRoot.GetConnectionString("SSO");
+                //    options.SchemaName = "dbo";
+                //    options.TableName = "Sessions";
+                //});
             });
 
             builder.Services.AddHsts(options =>
