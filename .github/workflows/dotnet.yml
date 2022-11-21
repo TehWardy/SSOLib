@@ -3,7 +3,6 @@ on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -12,14 +11,14 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 7.0.*
         
     - name: Build
-      run: dotnet build **/Everything.sln
+      run: dotnet build src/Everything.sln
       
     - name: Test
       run: dotnet test --no-build --verbosity normal
       
     - name: Publish
       if: startsWith(github.ref, 'refs/heads/master')
-      run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+      run: nuget push **/*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
