@@ -4,11 +4,12 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<Title>SSOLib</Title>
-	<Version>1.0.2</Version>
-	<AssemblyVersion>1.0.2</AssemblyVersion>
+	<Version>1.0.3</Version>
+	<AssemblyVersion>1.0.3</AssemblyVersion>
 	<IsPackable>true</IsPackable>
-	<FileVersion>1.0.2</FileVersion>
+	<FileVersion>1.0.3</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
