@@ -1,4 +1,5 @@
 ﻿using Security.Data;
+using Security.Data.Brokers.Authentication;
 using Security.Data.Brokers.Encryption;
 using Security.Data.Brokers.Storage;
 using Security.Data.Brokers.Storage.Interfaces;
@@ -28,7 +29,6 @@ namespace Security.UserManager
             services.AddDbContextFactory<SSODbContext>();
             services.AddTransient<ISSODbContextFactory, SSODbContextFactory>();
             services.AddTransient<ICrypto<string>>(_ => new AesCrypto<string>(configuration.GetSection("Settings")["DecryptionKey"]));
-            services.AddTransient<ISSOAuthInfo>(_ => new SSOAuthInfo() { SSOUserId = "Guest" });
 
             services.AddBrokers();
             services.AddFoundations();
@@ -51,6 +51,7 @@ namespace Security.UserManager
             services.AddTransient<IUserEventBroker, UserEventBroker>();
 
             services.AddTransient<IPasswordEncryptionBroker, PasswordEncryptionBroker>();
+            services.AddTransient<IIdentityBroker, IdentityBroker>();
         }
 
         public static void AddFoundations(this IServiceCollection services)

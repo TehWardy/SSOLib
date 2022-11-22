@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Security.Data.Brokers.Encryption;
 using Security.Data.EF;
-using Security.Objects;
 using Security.Objects.Entities;
 using System.Linq;
 
@@ -25,7 +24,7 @@ namespace SSO.AcceptanceTests
 
                 using var db = new SSODbContext(
                     scopedServices.GetRequiredService<IConfiguration>(),
-                    scopedServices.GetRequiredService<ISSOAuthInfo>(),
+                    null,
                     scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
                 db.Database.EnsureCreated();
                 SeedTestData(db, encryptionBroker);

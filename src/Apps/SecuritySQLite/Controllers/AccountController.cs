@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using Security.Data.Brokers.Authentication;
 using Security.Objects.DTOs;
 using Security.Services.Services.Orchestration.Interfaces;
 using System;
@@ -14,12 +15,18 @@ namespace SecuritySQLite.Controllers
     {
         readonly IAuthenticationOrchestrationService authenticationService;
         private readonly ISSOUserOrchestrationService userManagerService;
+        private readonly IIdentityBroker identityBroker;
 
-        public AccountController(IAuthenticationOrchestrationService authenticationService, ISSOUserOrchestrationService userManagerService)
+        public AccountController(IAuthenticationOrchestrationService authenticationService, ISSOUserOrchestrationService userManagerService, IIdentityBroker identityBroker)
         {
             this.authenticationService = authenticationService;
             this.userManagerService = userManagerService;
+            this.identityBroker = identityBroker;
         }
+
+        [HttpGet("Me")]
+        public IActionResult Me()
+            => Ok(identityBroker.Me());
 
         [HttpPost("Login")]
         public async ValueTask<IActionResult> Login([FromBody] Auth auth)

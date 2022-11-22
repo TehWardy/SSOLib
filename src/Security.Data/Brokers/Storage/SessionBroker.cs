@@ -1,5 +1,6 @@
 ﻿using Security.Data.Brokers.Storage.Interfaces;
 using Security.Data.EF.Interfaces;
+using Security.Objects.Entities;
 
 namespace Security.Data.Brokers.Storage
 {
@@ -10,7 +11,7 @@ namespace Security.Data.Brokers.Storage
         public SessionBroker(ISSODbContextFactory contextFactory)
             => this.contextFactory = contextFactory;
 
-        public async ValueTask<Objects.Entities.Session> AddSessionAsync(Objects.Entities.Session Session)
+        public async ValueTask<Session> AddSessionAsync(Session Session)
         {
             using var context = contextFactory.CreateDbContext();
 
@@ -20,7 +21,7 @@ namespace Security.Data.Brokers.Storage
             return entityEntry.Entity;
         }
 
-        public async ValueTask<Objects.Entities.Session> UpdateSessionAsync(Objects.Entities.Session Session)
+        public async ValueTask<Session> UpdateSessionAsync(Session Session)
         {
             using var context = contextFactory.CreateDbContext();
 
@@ -30,7 +31,7 @@ namespace Security.Data.Brokers.Storage
             return entityEntry.Entity;
         }
 
-        public async ValueTask DeleteSessionAsync(Objects.Entities.Session Session)
+        public async ValueTask DeleteSessionAsync(Session Session)
         {
             using var context = contextFactory.CreateDbContext();
 
@@ -38,7 +39,7 @@ namespace Security.Data.Brokers.Storage
             await context.SaveChangesAsync();
         }
 
-        public IQueryable<Objects.Entities.Session> GetAllSessions()
+        public IQueryable<Session> GetAllSessions()
         {
             var context = contextFactory.CreateDbContext();
             return context.Sessions;

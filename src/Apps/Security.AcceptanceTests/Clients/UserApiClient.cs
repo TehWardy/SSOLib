@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Security.AcceptanceTests.Exceptions;
 using Security.Data.Brokers.Encryption;
 using Security.Data.EF;
-using Security.Objects;
 using Security.Objects.DTOs;
 using Security.Objects.Entities;
 using SecuritySQLite;
@@ -21,7 +20,7 @@ namespace Security.AcceptanceTests.Clients
     public class UserApiClient
     {
         readonly WebApplicationFactory<Program> webApplicationFactory;
-        readonly HttpClient Api;
+        HttpClient Api;
 
         const string Endpoint = "Api/Account/";
 
@@ -33,6 +32,20 @@ namespace Security.AcceptanceTests.Clients
             Api = webApplicationFactory.CreateClient();
             Api.Authenticate("TestUser@corporatelinx.com", "TestPass01!").AsTask().Wait();
         }
+
+        public void AddBearerAuthentication(string bearer)
+        {
+            if (bearer == null)
+                Api.DefaultRequestHeaders.Authorization = null;
+            else
+                Api.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", bearer);
+        }
+
+        public HttpClient UseNoCookiesApiClient()
+            => Api = webApplicationFactory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        public async ValueTask<SSOUser> Me(string query = "")
+            => await Api.GetAsync<SSOUser>(Endpoint + "Me" + query);
 
         public async ValueTask<SSOUser> RegisterAsync(RegisterUser registerUser, string query = "")
         {
@@ -57,7 +70,7 @@ namespace Security.AcceptanceTests.Clients
 
             using var database = new SSODbContext(
                 scopedServices.GetRequiredService<IConfiguration>(),
-                scopedServices.GetRequiredService<ISSOAuthInfo>(),
+                null,
                 scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
 
             var user = database.Users
@@ -66,8 +79,16 @@ namespace Security.AcceptanceTests.Clients
 
             if(user != null)
             {
-                var tokens = database.Tokens.Where(t => t.UserName == user.Id).ToList();
-                var userRoles = database.UserRoles.Where(r => r.User.Id == user.Id).ToList();
+                var tokens = database.Tokens
+                    .IgnoreQueryFilters()
+                    .Where(t => t.UserName == user.Id)
+                    .ToList();
+
+                var userRoles = database.UserRoles
+                    .IgnoreQueryFilters()
+                    .Where(r => r.User.Id == user.Id)
+                    .ToList();
+
                 database.Tokens.RemoveRange(tokens);
                 database.UserRoles.RemoveRange(userRoles);
                 database.Users.Remove(user);
