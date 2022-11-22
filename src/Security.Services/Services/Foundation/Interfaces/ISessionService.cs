@@ -8,5 +8,6 @@ namespace Security.Services.Services.Foundation.Interfaces
         string GetString(string key);
         SSOUser GetUser();
         void SetUser(SSOUser user);
+        void RemoveKey(string key);
     }
 }

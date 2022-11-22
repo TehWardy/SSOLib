@@ -1,6 +1,7 @@
 ﻿using Security.Data;
 using Security.Data.Brokers.Authentication;
 using Security.Data.Brokers.Encryption;
+using Security.Data.Brokers.Serialization;
 using Security.Data.Brokers.Storage;
 using Security.Data.Brokers.Storage.Interfaces;
 using Security.Data.EF;
@@ -55,6 +56,7 @@ namespace Security.UserManager
 
             services.AddTransient<IPasswordEncryptionBroker, PasswordEncryptionBroker>();
             services.AddTransient<IIdentityBroker, IdentityBroker>();
+            services.AddTransient<ISerializationBroker, SerializationBroker>();
         }
 
         public static void AddFoundations(this IServiceCollection services)

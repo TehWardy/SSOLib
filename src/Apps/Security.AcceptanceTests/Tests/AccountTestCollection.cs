@@ -5,8 +5,7 @@ namespace Security.AcceptanceTests.Tests
 {
     [CollectionDefinition(nameof(AccountTestCollection))]
     public class AccountTestCollection :
-        ICollectionFixture<UserApiClient>,
-        ICollectionFixture<AuthenticationApiClient>
+        ICollectionFixture<UserApiClient>
     {
 
     }

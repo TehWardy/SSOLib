@@ -41,6 +41,18 @@ namespace Security.AcceptanceTests.Clients
                 Api.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", bearer);
         }
 
+        public void AddBasicAuthentication(Auth auth)
+        {
+            if (auth == null)
+                Api.DefaultRequestHeaders.Authorization = null;
+            else
+            {
+                string encoded = System.Convert.ToBase64String(Encoding.UTF8.GetBytes(auth.User + ":" + auth.Pass));
+
+                Api.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("basic", encoded);
+            }
+        }
+
         public HttpClient UseNoCookiesApiClient()
             => Api = webApplicationFactory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
@@ -60,6 +72,14 @@ namespace Security.AcceptanceTests.Clients
 
             request.EnsureSuccessStatusCode();
             return await request.Content.ReadAsAsync<SSOUser>();
+        }
+
+        public async ValueTask<Token> LoginAsync(Auth auth, string query = "")
+        {
+            var content = new StringContent(auth.ToJson(), Encoding.UTF8, "application/json");
+            var request = await Api.PostAsync(Endpoint + "Login" + query, content);
+            request.EnsureSuccessStatusCode();
+            return await request.Content.ReadAsAsync<Token>();
         }
 
         public async Task TearDown(string ssoUserId)

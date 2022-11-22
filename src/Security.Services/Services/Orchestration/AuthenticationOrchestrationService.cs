@@ -33,7 +33,6 @@ namespace Security.Services.Services.Orchestration
 
             sessionProcessingService.SetUser(user);
             var token = await tokenProcessingService.AddTokenForUserIdAsync(user.Id);
-            sessionProcessingService.SetString("token", token.Id);
             return token;
         }
 

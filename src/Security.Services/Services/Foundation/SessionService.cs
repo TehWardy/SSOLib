@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Security.Data.Brokers.Serialization;
 using Security.Objects.Entities;
 using Security.Services.Services.Foundation.Interfaces;
 
@@ -6,10 +7,14 @@ namespace Security.UserManager.Services.Foundation
 {
     public class SessionService : ISessionService
     {
-        readonly ISession session;
+        private readonly ISession session;
+        private readonly ISerializationBroker serilizationBroker;
 
-        public SessionService(ISession session)
-            => this.session = session;
+        public SessionService(ISession session, ISerializationBroker serilizationBroker)
+        {
+            this.session = session;
+            this.serilizationBroker = serilizationBroker;
+        }
 
         public void SetString(string key, string value)
             => session.SetString(key, value);
@@ -21,9 +26,7 @@ namespace Security.UserManager.Services.Foundation
         {
             var userJson = session.GetString("ssoUser");
 
-            return userJson != null
-                ? System.Text.Json.JsonSerializer.Deserialize<SSOUser>(userJson)
-                : new SSOUser { Id = "Guest", DisplayName = "Guest" };
+            return serilizationBroker.Deserialize<SSOUser>(session.GetString("ssoUser"));
         }
 
         public void SetUser(SSOUser user)
@@ -33,5 +36,8 @@ namespace Security.UserManager.Services.Foundation
             else
                 session?.Remove("ssoUser");
         }
+
+        public void RemoveKey(string key)
+            => session.Remove(key);
     }
 }

@@ -17,10 +17,50 @@ namespace Security.AcceptanceTests.Tests
             SSOUser existingSSOUser = await userApiClient.RegisterAsync(existingRegisterUser);
 
             Auth inputAuth = RandomAuth(existingRegisterUser);
-            Token token = await authenticationApiClient.LoginAsync(inputAuth);
+            Token token = await userApiClient.LoginAsync(inputAuth);
 
             //when
             userApiClient.AddBearerAuthentication(token.Id);
+            SSOUser actualSSOUser = await userApiClient.Me();
+
+            //then
+            actualSSOUser.Should().BeEquivalentTo(existingSSOUser);
+
+            await TearDownUserAsync(existingSSOUser.Id);
+        }
+
+        [Fact]
+        public async void MeWorksAsExpectedForSession()
+        {
+            //given
+            RegisterUser existingRegisterUser = RandomRegisterUser();
+            SSOUser existingSSOUser = await userApiClient.RegisterAsync(existingRegisterUser);
+
+            Auth inputAuth = RandomAuth(existingRegisterUser);
+            Token token = await userApiClient.LoginAsync(inputAuth);
+
+            //when
+            SSOUser actualSSOUser = await userApiClient.Me();
+
+            //then
+            actualSSOUser.Should().BeEquivalentTo(existingSSOUser);
+
+            await TearDownUserAsync(existingSSOUser.Id);
+        }
+
+        [Fact]
+        public async void MeWorksAsExpectedForBasic()
+        {
+            //given
+            userApiClient.UseNoCookiesApiClient();
+
+            RegisterUser existingRegisterUser = RandomRegisterUser();
+            SSOUser existingSSOUser = await userApiClient.RegisterAsync(existingRegisterUser);
+
+            Auth inputAuth = RandomAuth(existingRegisterUser);
+
+            //when
+            userApiClient.AddBasicAuthentication(inputAuth);
             SSOUser actualSSOUser = await userApiClient.Me();
 
             //then

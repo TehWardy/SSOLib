@@ -17,7 +17,7 @@ namespace Security.AcceptanceTests.Tests
             Auth inputAuth = RandomAuth(existingRegisterUser);
 
             //when
-            Token actualToken = await authenticationApiClient.LoginAsync(inputAuth);
+            Token actualToken = await userApiClient.LoginAsync(inputAuth);
 
             //then
             Assert.True(actualToken.UserName == existingSSOUser.Id);

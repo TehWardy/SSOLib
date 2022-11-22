@@ -9,12 +9,10 @@ namespace Security.AcceptanceTests.Tests
     [Collection(nameof(AccountTestCollection))]
     public partial class AccountApiTests
     {
-        private readonly AuthenticationApiClient authenticationApiClient;
         private readonly UserApiClient userApiClient;
 
-        public AccountApiTests(AuthenticationApiClient authenticationApiClient, UserApiClient userApiClient)
+        public AccountApiTests(UserApiClient userApiClient)
         {
-            this.authenticationApiClient = authenticationApiClient;
             this.userApiClient = userApiClient;
         }
 

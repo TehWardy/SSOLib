@@ -8,5 +8,6 @@ namespace Security.Services.Services.Processing.Interfaces
         string GetString(string key);
         SSOUser GetUser();
         void SetUser(SSOUser user);
+        void Logout();
     }
 }

@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Security.Data\Security.Data.csproj" />
     <ProjectReference Include="..\Security.Objects\Security.Objects.csproj" />
+    <ProjectReference Include="..\SharedObjects\SharedObjects.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using Security.Objects;
 using Security.Services.Services.Foundation.Interfaces;
 using Security.Services.Services.Processing.Interfaces;
+using System.Security;
 using System.Text;
 
 namespace Security.UserManager.Services.Foundation
@@ -34,10 +35,18 @@ namespace Security.UserManager.Services.Foundation
             if (sessionAuthInfo != null)
                 return sessionAuthInfo;
 
-            var basicAuthInfo = GetBasicAuthentication();
+            try
+            {
+                var basicAuthInfo = GetBasicAuthentication();
 
-            if (basicAuthInfo != null)
-                return basicAuthInfo;
+                if (basicAuthInfo != null)
+                    return basicAuthInfo;
+            }
+
+            catch(SecurityException)
+            {
+                return new SSOAuthInfo { SSOUserId = "Guest" };
+            }
 
             return new SSOAuthInfo { SSOUserId = "Guest" };
         }
@@ -95,7 +104,7 @@ namespace Security.UserManager.Services.Foundation
             return (
                 authString.Contains('&')
                     ? authString.Split("&")[0]
-                    : authString.Split(":")[1],
+                    : authString.Split(":")[0],
                 authString.Contains('&')
                     ? authString.Split("&")[1]
                     : authString.Split(":")[1]

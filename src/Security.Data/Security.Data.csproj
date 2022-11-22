@@ -32,6 +32,13 @@
     <ProjectReference Include="..\Security.Data.EF\Security.Data.EF.csproj" />
     <ProjectReference Include="..\Security.Objects\Security.Objects.csproj" />
     <ProjectReference Include="..\Security.Data.EF.MSSQL\Security.Data.EF.MSSQL.csproj" />
+    <ProjectReference Include="..\SharedObjects\SharedObjects.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Brokers\Serialization\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Brokers\Serialization\" />
+  </ItemGroup>
 </Project>
