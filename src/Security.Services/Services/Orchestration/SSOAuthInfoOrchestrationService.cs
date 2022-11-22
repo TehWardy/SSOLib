@@ -6,16 +6,16 @@ using System.Text;
 
 namespace Security.UserManager.Services.Foundation
 {
-    public class SSOAuthInfoProcessingService : ISSOAuthInfoProcessingService
+    public class SSOAuthInfoOrchestrationService : ISSOAuthInfoOrchestrationService
     {
         readonly HttpRequest request;
-        readonly ISessionService sessionService;
-        readonly ISSOUserService userService;
+        readonly ISessionProcessingService sessionService;
+        readonly ISSOUserProcessingService userService;
 
-        public SSOAuthInfoProcessingService(
+        public SSOAuthInfoOrchestrationService(
             HttpRequest request,
-            ISessionService sessionService,
-            ISSOUserService userService)
+            ISessionProcessingService sessionService,
+            ISSOUserProcessingService userService)
         {
             this.request = request;
             this.sessionService = sessionService;
@@ -24,19 +24,32 @@ namespace Security.UserManager.Services.Foundation
 
         public ISSOAuthInfo GetSSOAuthInfo()
         {
-            var result = GetFromSession() ?? GetBearerAuthentication();
-            //result ??= GetBasicAuthentication();
-            result ??= new SSOAuthInfo { SSOUserId = "Guest" };
-            return result;
+            var bearerAuthInfo = GetBearerAuthentication();
+
+            if (bearerAuthInfo != null)
+                return bearerAuthInfo;
+
+            var sessionAuthInfo = GetFromSession();
+
+            if (sessionAuthInfo != null)
+                return sessionAuthInfo;
+
+            var basicAuthInfo = GetBasicAuthentication();
+
+            if (basicAuthInfo != null)
+                return basicAuthInfo;
+
+            return new SSOAuthInfo { SSOUserId = "Guest" };
         }
 
         ISSOAuthInfo GetFromSession()
         {
             var user = sessionService.GetUser();
 
-            return user != null
-                ? new SSOAuthInfo { SSOUserId = user.Id }
-                : null;
+            if (user == null)
+                return null;
+
+            return new SSOAuthInfo { SSOUserId = user.Id };
         }
 
         ISSOAuthInfo GetBearerAuthentication()
@@ -46,17 +59,14 @@ namespace Security.UserManager.Services.Foundation
             if (tokenId == null)
                 return null;
 
-            var user = userService
-                .GetAllSSOUsers()
-                .FirstOrDefault(u => u.Tokens.Any(t => t.Id == tokenId));
+            var user = userService.FindByTokenId(tokenId);
+
+            if (user == null)
+                return null;
 
             return new SSOAuthInfo { SSOUserId = user.Id };
         }
 
-        /*
-         * This may benefit from being a middleware function as it requires
-         * an extra layer of processing
-         * 
         ISSOAuthInfo GetBasicAuthentication()
         {
             if (request != null && request.Headers.ContainsKey("Authorization"))
@@ -64,17 +74,16 @@ namespace Security.UserManager.Services.Foundation
                 string auth = request.Headers["Authorization"].ToString();
 
                 if (auth.ToLowerInvariant().StartsWith("basic"))
-                    return AuthenticateBasicAuth(auth).Result;
+                    return AuthenticateBasicAuth(auth);
             }
 
             return null;
         }
 
-        async Task<ISSOAuthInfo> AuthenticateBasicAuth(string auth)
+        ISSOAuthInfo AuthenticateBasicAuth(string auth)
         {
             (string username, string password) = ParseBasicAuthDetails(auth);
-            var token = await userService.Login(username, password);
-            var user = userService.GetUserByTokenId(token.Id);
+            var user = userService.FindByUserAndPassword(username, password);
             return new SSOAuthInfo { SSOUserId = user.Id };
         }
 
@@ -92,21 +101,18 @@ namespace Security.UserManager.Services.Foundation
                     : authString.Split(":")[1]
             );
         }
-        */
 
         string GetBearerToken()
         {
             if (request == null || !request.Headers.ContainsKey("Authorization"))
                 return null;
 
-            string auth = request.Headers["Authorization"].ToString()
-                    ??
-                request.HttpContext.Session.GetString("token");
+            string auth = request.Headers["Authorization"].ToString();
 
             if (!auth.ToLowerInvariant().StartsWith("bearer"))
                 return null;
 
-            return auth.ToLower()[(auth.ToLower().IndexOf(" ") + 1)..];
+            return auth.Split(" ").LastOrDefault();
         }
     }
 }

@@ -17,6 +17,6 @@ namespace Security.Data.EF
         }
 
         public SSODbContext CreateDbContext()
-            => new(configuration, null, modelBuildProvider);
+            => new(configuration, modelBuildProvider);
     }
 }

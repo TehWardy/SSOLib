@@ -2,7 +2,7 @@
 
 namespace Security.Services.Services.Processing.Interfaces
 {
-    public interface ISSOAuthInfoProcessingService
+    public interface ISSOAuthInfoOrchestrationService
     {
         ISSOAuthInfo GetSSOAuthInfo();
     }

@@ -24,7 +24,6 @@ namespace SSO.AcceptanceTests
 
                 using var db = new SSODbContext(
                     scopedServices.GetRequiredService<IConfiguration>(),
-                    null,
                     scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
                 db.Database.EnsureCreated();
                 SeedTestData(db, encryptionBroker);

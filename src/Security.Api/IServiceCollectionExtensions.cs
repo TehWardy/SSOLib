@@ -28,8 +28,11 @@ namespace Security.UserManager
             services.AddDbContextPool<SSODbContext>(opt => { });
             services.AddDbContextFactory<SSODbContext>();
             services.AddTransient<ISSODbContextFactory, SSODbContextFactory>();
+            services.AddTransient<IIdentitySSODbContextFactory, IdentitySSODbContextFactory>();
             services.AddTransient<ICrypto<string>>(_ => new AesCrypto<string>(configuration.GetSection("Settings")["DecryptionKey"]));
-
+            services.AddTransient<ISSOAuthInfo>((IServiceProvider provider)
+                => provider.GetService<ISSOAuthInfoOrchestrationService>().GetSSOAuthInfo()
+            );
             services.AddBrokers();
             services.AddFoundations();
             services.AddProcessings();
@@ -77,6 +80,7 @@ namespace Security.UserManager
         public static void AddOrchestrations(this IServiceCollection services)
         {
             services.AddTransient<ISSOUserOrchestrationService, SSOUserOrchestrationService>();
+            services.AddTransient<ISSOAuthInfoOrchestrationService, SSOAuthInfoOrchestrationService>();
             services.AddTransient<IAuthenticationOrchestrationService, AuthenticationOrchestrationService>();
         }
 

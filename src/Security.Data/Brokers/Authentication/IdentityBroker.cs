@@ -5,9 +5,9 @@ namespace Security.Data.Brokers.Authentication
 {
     public class IdentityBroker : IIdentityBroker
     {
-        private readonly ISSODbContextFactory dbContextFactory;
+        private readonly IIdentitySSODbContextFactory dbContextFactory;
 
-        public IdentityBroker(ISSODbContextFactory dbContextFactory)
+        public IdentityBroker(IIdentitySSODbContextFactory dbContextFactory)
         {
             this.dbContextFactory = dbContextFactory;
         }

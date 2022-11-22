@@ -70,7 +70,6 @@ namespace Security.AcceptanceTests.Clients
 
             using var database = new SSODbContext(
                 scopedServices.GetRequiredService<IConfiguration>(),
-                null,
                 scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
 
             var user = database.Users
