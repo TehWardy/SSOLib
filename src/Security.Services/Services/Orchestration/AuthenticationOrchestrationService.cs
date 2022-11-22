@@ -1,6 +1,7 @@
 ﻿using Security.Objects.Entities;
 using Security.Services.Services.Orchestration.Interfaces;
 using Security.Services.Services.Processing.Interfaces;
+using System.Security;
 
 namespace Security.Services.Services.Orchestration
 {
@@ -26,6 +27,10 @@ namespace Security.Services.Services.Orchestration
         public async ValueTask<Token> LoginAsync(string username, string password)
         {
             var user = ssoUserProcessingService.FindByUserAndPassword(username, password);
+
+            if (user == null)
+                throw new SecurityException("Access Denied!");
+
             sessionProcessingService.SetUser(user);
             var token = await tokenProcessingService.AddTokenForUser(user.Id);
             sessionProcessingService.SetString("token", token.Id);
