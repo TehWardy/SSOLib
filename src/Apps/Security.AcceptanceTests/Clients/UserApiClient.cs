@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Security.AcceptanceTests.Exceptions;
+using Security.Data.Brokers.Encryption;
 using Security.Data.EF;
+using Security.Objects;
 using Security.Objects.DTOs;
 using Security.Objects.Entities;
 using SecuritySQLite;
 using SharedObjects.Extensions;
 using SSO.AcceptanceTests;
-using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -19,8 +22,6 @@ namespace Security.AcceptanceTests.Clients
     {
         readonly WebApplicationFactory<Program> webApplicationFactory;
         readonly HttpClient Api;
-
-        public SSODbContext Database { get; private set; }
 
         const string Endpoint = "Api/Account/";
 
@@ -48,20 +49,29 @@ namespace Security.AcceptanceTests.Clients
             return await request.Content.ReadAsAsync<SSOUser>();
         }
 
-        public async void TearDown(string ssoUserId)
+        public async Task TearDown(string ssoUserId)
         {
-            var user = Database.Users
+            using var scope = webApplicationFactory.Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var encryptionBroker = scopedServices.GetService<IPasswordEncryptionBroker>();
+
+            using var database = new SSODbContext(
+                scopedServices.GetRequiredService<IConfiguration>(),
+                scopedServices.GetRequiredService<ISSOAuthInfo>(),
+                scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
+
+            var user = database.Users
                 .IgnoreQueryFilters()
                 .FirstOrDefault(u => u.Id == ssoUserId);
 
             if(user != null)
             {
-                var tokens = Database.Tokens.Where(t => t.UserName == user.Id).ToList();
-                var userRoles = Database.UserRoles.Where(r => r.User.Id == user.Id).ToList();
-                Database.Tokens.RemoveRange(tokens);
-                Database.UserRoles.RemoveRange(userRoles);
-                Database.Users.Remove(user);
-                await Database.SaveChangesAsync();
+                var tokens = database.Tokens.Where(t => t.UserName == user.Id).ToList();
+                var userRoles = database.UserRoles.Where(r => r.User.Id == user.Id).ToList();
+                database.Tokens.RemoveRange(tokens);
+                database.UserRoles.RemoveRange(userRoles);
+                database.Users.Remove(user);
+                await database.SaveChangesAsync();
             }
         }
     }

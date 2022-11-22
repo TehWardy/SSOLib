@@ -8,10 +8,11 @@ using SSO.AcceptanceTests;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Security.AcceptanceTests.Clients
 {
-    public class AuthenticationApiClient
+    public class AuthenticationApiClient : IClassFixture<AuthenticationApiClient>
     {
         readonly WebApplicationFactory<Program> webApplicationFactory;
         readonly HttpClient Api;

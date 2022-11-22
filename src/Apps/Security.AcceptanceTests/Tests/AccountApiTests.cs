@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using Security.AcceptanceTests.Clients;
 using Security.Objects.DTOs;
-using Tynamix.ObjectFiller;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Security.AcceptanceTests.Tests
@@ -18,15 +18,12 @@ namespace Security.AcceptanceTests.Tests
             this.userApiClient = userApiClient;
         }
 
-        static Auth RandomAuth()
-            => GetAuthFiller().Create();
-
-        static Filler<Auth> GetAuthFiller()
-        {
-            var filler = new Filler<Auth>();
-
-            return filler;
-        }
+        static Auth RandomAuth(RegisterUser user)
+            => new Auth()
+            {
+                User = user.Email,
+                Pass = user.Password
+            };
 
         static RegisterUser RandomRegisterUser()
             => GetRegisterUserFiller().Generate();
@@ -43,7 +40,7 @@ namespace Security.AcceptanceTests.Tests
             return filler;
         }
 
-        void TearDownUser(string userId)
-            => userApiClient.TearDown(userId);
+        async Task TearDownUserAsync(string userId)
+            => await userApiClient.TearDown(userId);
     }
 }

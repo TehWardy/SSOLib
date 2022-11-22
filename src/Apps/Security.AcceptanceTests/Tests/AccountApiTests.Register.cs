@@ -34,7 +34,7 @@ namespace Security.AcceptanceTests.Tests
 
             Assert.True(!string.IsNullOrEmpty(actualSSOUser.PasswordHash) && actualSSOUser.PasswordHash.Trim().Length > 5);
 
-            TearDownUser(actualSSOUser.Id);
+            await TearDownUserAsync(actualSSOUser.Id);
         }
     }
 }
