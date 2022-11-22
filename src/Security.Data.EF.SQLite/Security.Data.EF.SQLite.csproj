@@ -6,10 +6,10 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<Title>SSOLib</Title>
-	<Version>1.0.1</Version>
-	<AssemblyVersion>1.0.1</AssemblyVersion>
+	<Version>1.0.2</Version>
+	<AssemblyVersion>1.0.2</AssemblyVersion>
 	<IsPackable>true</IsPackable>
-	<FileVersion>1.0.1</FileVersion>
+	<FileVersion>1.0.2</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
