@@ -12,7 +12,7 @@ namespace Security.Services.Processing
         public TokenProcessingService(ITokenService tokenService)
             => this.tokenService = tokenService;
 
-        public async ValueTask<Token> AddTokenForUser(string userId)
+        public async ValueTask<Token> AddTokenForUserIdAsync(string userId)
             => await tokenService.AddTokenAsync(userId);
 
         public async ValueTask DeleteTokenAsync(string tokenId)

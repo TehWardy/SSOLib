@@ -4,7 +4,7 @@ namespace Security.Services.Services.Processing.Interfaces
 {
     public interface ITokenProcessingService
     {
-        ValueTask<Token> AddTokenForUser(string userId);
+        ValueTask<Token> AddTokenForUserIdAsync(string userId);
         ValueTask DeleteTokenAsync(string tokenId);
         Token GetTokenById(string id);
         ValueTask<Token> GenerateConfirmationToken(string userId, int reasonCode);

@@ -38,7 +38,7 @@ namespace Security.Services.Processing
             if (user == null)
                 throw new SecurityException("Access Denied!");
 
-            if (encryptionBroker.Encrypt(password) != user.PasswordHash)
+            if (!encryptionBroker.EncryptedAndPlainTextAreEqual(user.PasswordHash, password))
                 throw new SecurityException("Access Denied!");
 
             return user;

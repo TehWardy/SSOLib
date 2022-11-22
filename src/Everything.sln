@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecuritySQLite", "Apps\Secu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Security.AcceptanceTests", "Apps\Security.AcceptanceTests\Security.AcceptanceTests.csproj", "{209293D3-9C85-450B-BB4F-1781189C721C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedObjects", "SharedObjects\SharedObjects.csproj", "{C4D1A33F-5C56-4AA6-B05B-A7E209B79118}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{209293D3-9C85-450B-BB4F-1781189C721C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{209293D3-9C85-450B-BB4F-1781189C721C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{209293D3-9C85-450B-BB4F-1781189C721C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4D1A33F-5C56-4AA6-B05B-A7E209B79118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4D1A33F-5C56-4AA6-B05B-A7E209B79118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4D1A33F-5C56-4AA6-B05B-A7E209B79118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4D1A33F-5C56-4AA6-B05B-A7E209B79118}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

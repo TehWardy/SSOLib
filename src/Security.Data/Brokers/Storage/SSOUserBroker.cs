@@ -44,7 +44,7 @@ namespace Security.Data.Brokers.Storage
         {
             var context = contextFactory.CreateDbContext();
 
-            return ignoreFilters  
+            return ignoreFilters
                 ? context.Users.IgnoreQueryFilters()
                 : context.Users;
         }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Security.Data.Brokers.Encryption;
 using Security.Data.EF;
 using Security.Objects;
 using Security.Objects.Entities;
@@ -20,27 +21,28 @@ namespace SSO.AcceptanceTests
             {
                 using var scope = appFactory.Services.CreateScope();
                 var scopedServices = scope.ServiceProvider;
+                var encryptionBroker = scopedServices.GetService<IPasswordEncryptionBroker>();
 
                 using var db = new SSODbContext(
                     scopedServices.GetRequiredService<IConfiguration>(),
                     scopedServices.GetRequiredService<ISSOAuthInfo>(),
                     scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
                 db.Database.EnsureCreated();
-                SeedTestData(db);
+                SeedTestData(db, encryptionBroker);
             }
         }
 
-        static void SeedTestData(SSODbContext db)
+        static void SeedTestData(SSODbContext db, IPasswordEncryptionBroker encryptionBroker)
         {
-            SetupTestUser(db);
+            SetupTestUser(db, encryptionBroker);
         }
 
-        static void SetupTestUser(SSODbContext db)
+        static void SetupTestUser(SSODbContext db, IPasswordEncryptionBroker encryptionBroker)
         {
             if (!db.Users.IgnoreQueryFilters().Any(u => u.Id == "TestUser"))
             {
                 var allPrivs = db.GetPrivileges().Select(p => p.Id).ToArray();
-                var user = db.Add(CreateTestUser()).Entity;
+                var user = db.Add(CreateTestUser(encryptionBroker)).Entity;
                 var role = db.Add(CreateTestAdminsRole(allPrivs)).Entity;
                 db.SaveChanges();
                 db.Add(new SSOUserRole { UserId = user.Id, RoleId = role.Id });
@@ -48,11 +50,19 @@ namespace SSO.AcceptanceTests
             }
         }
 
-        static SSOUser CreateTestUser()
+        static SSOUser CreateTestUser(IPasswordEncryptionBroker encryptionBroker)
             => new()
             {
                 Id = "TestUser",
-                DisplayName = "Test User"
+                DisplayName = "Test User",
+                PasswordHash = encryptionBroker.Encrypt("TestPass01!"),
+                AccessFailedCount = 0,
+                Email = "TestUser@corporatelinx.com",
+                EmailConfirmed = true,
+                PhoneNumber = string.Empty,
+                PhoneNumberConfirmed = false,
+                LockoutEnabled = false,
+                LockoutEndDateUtc = null,
             };
 
         static SSORole CreateTestAdminsRole(string[] allPrivs)

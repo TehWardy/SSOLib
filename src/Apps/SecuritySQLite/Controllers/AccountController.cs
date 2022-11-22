@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RESTFulSense.Controllers;
 using Security.Objects.DTOs;
 using Security.Services.Services.Orchestration.Interfaces;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Security;
 using System.Threading.Tasks;
 
 namespace SecuritySQLite.Controllers
 {
     [Route("/Api/Account")]
-    public class AccountController : Controller
+    public class AccountController : RESTFulController
     {
         readonly IAuthenticationOrchestrationService authenticationService;
         private readonly ISSOUserOrchestrationService userManagerService;
@@ -17,23 +21,29 @@ namespace SecuritySQLite.Controllers
             this.userManagerService = userManagerService;
         }
 
-        public class Auth
-        { 
-            public string User { get; set; }
-            public string Pass { get; set; }
-        }
-
-        public class ChangePasswordRequest
-        {
-            public string OldPassword { get; set; }
-            public string NewPassword { get; set; }
-        }
-
         [HttpPost("Login")]
         public async ValueTask<IActionResult> Login([FromBody] Auth auth)
-            => ModelState.IsValid
-                ? Ok(await authenticationService.LoginAsync(auth.User, auth.Pass))
-                : BadRequest(ModelState);
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                return Ok(await authenticationService.LoginAsync(auth.User, auth.Pass));
+            }
+            catch(ValidationException ex)
+            {
+                return BadRequest(ex);
+            }
+            catch (SecurityException ex)
+            {
+                return Unauthorized(ex);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
 
         [HttpPost("Logout")]
         public async ValueTask<IActionResult> Logout()
@@ -44,20 +54,32 @@ namespace SecuritySQLite.Controllers
 
         [HttpPost("Register")]
         public async ValueTask<IActionResult> Register([FromBody] RegisterUser registerForm)
-            => (ModelState.IsValid)
-                ? Ok(await userManagerService.Register(registerForm))
-                : BadRequest(ModelState);
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                return Ok(await userManagerService.Register(registerForm));
+            }
+            catch(ValidationException ex)
+            {
+                return BadRequest(ex);
+            }
+            catch(Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
 
         [HttpPost("ChangePassword")]
         public async ValueTask<IActionResult> ChangePassword(ChangePasswordRequest request)
         {
-            if (ModelState.IsValid)
-            {
-                await userManagerService.ChangePassword(request.OldPassword, request.NewPassword);
-                return Ok();
-            }
-            else 
+            if(!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            await userManagerService.ChangePassword(request.OldPassword, request.NewPassword);
+            return Ok();
         }
     }
 }

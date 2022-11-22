@@ -32,7 +32,7 @@ namespace Security.Services.Services.Orchestration
                 throw new SecurityException("Access Denied!");
 
             sessionProcessingService.SetUser(user);
-            var token = await tokenProcessingService.AddTokenForUser(user.Id);
+            var token = await tokenProcessingService.AddTokenForUserIdAsync(user.Id);
             sessionProcessingService.SetString("token", token.Id);
             return token;
         }

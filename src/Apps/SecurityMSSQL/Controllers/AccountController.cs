@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace SecuritySQLite.Controllers
 {
     [Route("/Api/Account")]
-    public class AccountController : Controller
+    public partial class AccountController : Controller
     {
         readonly IAuthenticationOrchestrationService authenticationService;
         private readonly ISSOUserOrchestrationService userManagerService;
@@ -15,18 +15,6 @@ namespace SecuritySQLite.Controllers
         {
             this.authenticationService = authenticationService;
             this.userManagerService = userManagerService;
-        }
-
-        public class Auth
-        {
-            public string User { get; set; }
-            public string Pass { get; set; }
-        }
-
-        public class ChangePasswordRequest
-        {
-            public string OldPassword { get; set; }
-            public string NewPassword { get; set; }
         }
 
         [HttpPost("Login")]

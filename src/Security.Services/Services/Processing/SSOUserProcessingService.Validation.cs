@@ -1,7 +1,6 @@
 ﻿using Security.Objects.Entities;
 using Security.Services.Services.Processing.Interfaces;
 using System.ComponentModel.DataAnnotations;
-using System.Security;
 
 namespace Security.Services.Processing
 {
@@ -19,7 +18,7 @@ namespace Security.Services.Processing
                 throw new ValidationException("Password cannot be empty");
 
             var emailInSystem = ssoUserService
-                .GetAllSSOUsers()
+                .GetAllSSOUsers(true)
                 .Any(sso => sso.Email == user.Email);
 
             if (emailInSystem)
@@ -33,10 +32,15 @@ namespace Security.Services.Processing
             if (password.Length < 8)
                 throw new ValidationException("Password is too short");
 
-            if (password.Any(c => char.IsLetter(c) && password.Any(c => !char.IsLetter(c))))
-                throw new ValidationException("Password must contain both letter and non letter characters.");
+            bool passwordHasLetters = password.Any(c => char.IsLetter(c));
+            bool passwordHasDigits = password.Any(c => char.IsNumber(c));
+            bool passwordHasUpperCase = password.Any(c => char.IsUpper(c));
+            bool passwordHasLowerCase = password.Any(c => char.IsLower(c));
 
-            if (password.Any(c => char.IsLower(c) && password.Any(c => !char.IsLower(c))))
+            if (!(passwordHasLetters && passwordHasDigits))
+                throw new ValidationException("Password must contain both letter and numbers.");
+
+            if (!(passwordHasUpperCase && passwordHasLowerCase))
                 throw new ValidationException("Password must contain uppercase and lower case characters.");
         }
 

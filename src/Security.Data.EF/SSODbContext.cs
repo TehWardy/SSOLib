@@ -56,7 +56,6 @@ namespace Security.Data.EF
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             modelBuildProvider.Configure(configuration, optionsBuilder);
-            optionsBuilder.LogTo((message) => System.Diagnostics.Debug.WriteLine(message));
         }
 
         public SSOUser GetCurrentUser()
@@ -66,10 +65,10 @@ namespace Security.Data.EF
                 var userNameRequested = AuthInfo?.SSOUserId ?? "Guest";
                 if (userNameRequested != "Guest")
                     currentUser = Users
-                        .AsNoTracking()
                         .IgnoreQueryFilters()
                         .Include(u => u.Roles)
                             .ThenInclude(ur => ur.Role)
+                        .AsNoTracking()
                         .FirstOrDefault(u => u.Id == userNameRequested);
 
                 if (currentUser == null)

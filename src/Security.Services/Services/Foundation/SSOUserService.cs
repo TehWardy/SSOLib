@@ -6,27 +6,29 @@ namespace Security.Services.Foundation
 {
     public class SSOUserService : ISSOUserService
     {
-        readonly ISSOUserBroker userBrokerMock;
+        readonly ISSOUserBroker ssoUserBroker;
         
         public SSOUserService(ISSOUserBroker storageBroker)
-            => this.userBrokerMock = storageBroker;
+            => this.ssoUserBroker = storageBroker;
 
         public async ValueTask<SSOUser> AddSSOUserAsync(SSOUser item)
         {
-            var userIdCount = userBrokerMock.GetAllSSOUsers().Count(sso => sso.Id == item.Id);
-            if (userIdCount > 0)
-                item.Id = item.Id + userIdCount;
+            var userIdCount = ssoUserBroker.GetAllSSOUsers(true)
+                .Count(sso => sso.Id == item.Id);
 
-            return await userBrokerMock.AddSSOUserAsync(item);
+            if (userIdCount > 0)
+                item.Id += userIdCount;
+
+            return await ssoUserBroker.AddSSOUserAsync(item);
         }
 
         public async ValueTask DeleteSSOUserAsync(SSOUser item)
-            => await userBrokerMock.DeleteSSOUserAsync(item);
+            => await ssoUserBroker.DeleteSSOUserAsync(item);
 
         public async ValueTask<SSOUser> UpdateSSOUserAsync(SSOUser item)
-            => await userBrokerMock.UpdateSSOUserAsync(item);
+            => await ssoUserBroker.UpdateSSOUserAsync(item);
 
         public IQueryable<SSOUser> GetAllSSOUsers(bool ignoreFilters = false)
-            => userBrokerMock.GetAllSSOUsers(ignoreFilters);
+            => ssoUserBroker.GetAllSSOUsers(ignoreFilters);
     }
 }

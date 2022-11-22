@@ -44,13 +44,9 @@ namespace Security.Services.Services.Orchestration
         {
             ValidateRegisterForm(registerForm);
 
-            return (await ssoUserProcessingService.RegisterSSOUserAsync(new SSOUser
-            {
-                Id = registerForm.Email.Split("@")[0],
-                DisplayName = registerForm.DisplayName,
-                PasswordHash = registerForm.Password,
-                Email = registerForm.Email
-            }));
+            var mappedUser = MapToSSOUser(registerForm);
+
+            return await ssoUserProcessingService.RegisterSSOUserAsync(mappedUser);
         }
 
         static void ValidateRegisterForm(RegisterUser registerForm)
@@ -64,6 +60,16 @@ namespace Security.Services.Services.Orchestration
             if (string.IsNullOrEmpty(registerForm.Password))
                 throw new Exception("Password cannot be empty");
         }
+
+        private SSOUser MapToSSOUser(RegisterUser registerForm)
+            => new SSOUser
+            {
+                Id = registerForm.Email.Split("@")[0],
+                DisplayName = registerForm.DisplayName,
+                PasswordHash = registerForm.Password,
+                Email = registerForm.Email,
+                PhoneNumber = registerForm.PhoneNumber
+            };
 
         public async ValueTask ChangePassword(string oldPassword, string newPassword)
         {

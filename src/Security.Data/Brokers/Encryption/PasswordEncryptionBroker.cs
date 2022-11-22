@@ -1,9 +1,4 @@
 ﻿using Security.Data.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Security.Data.Brokers.Encryption
 {
@@ -18,5 +13,8 @@ namespace Security.Data.Brokers.Encryption
 
         public string Encrypt(string password)
             => crypto.Encrypt(password);
+
+        public bool EncryptedAndPlainTextAreEqual(string encrypted, string plainText)
+            => crypto.Decrypt(encrypted) == plainText;
     }
 }

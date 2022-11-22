@@ -1,4 +1,5 @@
 ﻿using Security.Data;
+using Security.Data.Brokers.Encryption;
 using Security.Data.Brokers.Storage;
 using Security.Data.Brokers.Storage.Interfaces;
 using Security.Data.EF;
@@ -48,6 +49,8 @@ namespace Security.UserManager
             services.AddTransient<ITenantAnalysisBroker, TenantAnalysisBroker>();
             services.AddTransient<ITokenBroker, TokenBroker>();
             services.AddTransient<IUserEventBroker, UserEventBroker>();
+
+            services.AddTransient<IPasswordEncryptionBroker, PasswordEncryptionBroker>();
         }
 
         public static void AddFoundations(this IServiceCollection services)
@@ -73,6 +76,7 @@ namespace Security.UserManager
         public static void AddOrchestrations(this IServiceCollection services)
         {
             services.AddTransient<ISSOUserOrchestrationService, SSOUserOrchestrationService>();
+            services.AddTransient<IAuthenticationOrchestrationService, AuthenticationOrchestrationService>();
         }
 
         public static void AddAspNet(this IServiceCollection services)
