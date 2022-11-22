@@ -45,19 +45,5 @@ namespace Security.Services.Processing
             if (string.IsNullOrEmpty(username))
                 throw new ValidationException("User cannot be empty!");
         }
-
-        void ValidateAuth(SSOUser user, string password)
-        {
-            var decryptedPassword = passwordCrypto.Decrypt(user.PasswordHash);
-
-            bool allGood =
-                string.IsNullOrEmpty(password) &&
-                user == null &&
-                password != decryptedPassword &&
-                user == null;
-
-            if (!allGood)
-                throw new SecurityException("Access Denied!");
-        }
     }
 }

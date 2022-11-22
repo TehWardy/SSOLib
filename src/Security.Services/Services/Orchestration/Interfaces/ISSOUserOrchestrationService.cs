@@ -3,12 +3,8 @@ using Security.Objects.Entities;
 
 namespace Security.Services.Services.Orchestration.Interfaces
 {
-    public interface ISSOUserAuthenticationOrchestrationService
+    public interface ISSOUserOrchestrationService
     {
-        ValueTask<Token> GenerateConfirmationToken(string userId, int reasonCode);
-        ValueTask<Token> Login(string username, string password);
-        ValueTask Logout(string tokenId = null);
-
         SSOUser GetUserByTokenId(string tokenId);
         SSOUser GetSSOUserById(string id);
         SSOUser GetSSOUserFromSession();

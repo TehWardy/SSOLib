@@ -6,13 +6,13 @@ using System.Security;
 
 namespace Security.Services.Services.Orchestration
 {
-    public class SSOUserAuthenticationOrchestrationService : ISSOUserAuthenticationOrchestrationService
+    public class SSOUserOrchestrationService : ISSOUserOrchestrationService
     {
         readonly ISSOUserProcessingService ssoUserProcessingService;
         readonly ITokenProcessingService tokenProcessingService;
         readonly ISessionProcessingService sessionService;
 
-        public SSOUserAuthenticationOrchestrationService(
+        public SSOUserOrchestrationService(
             ISSOUserProcessingService ssoUserProcessingService,
             ITokenProcessingService tokenProcessingService,
             ISessionProcessingService sessionService)
@@ -22,30 +22,8 @@ namespace Security.Services.Services.Orchestration
             this.sessionService = sessionService;
         }
 
-        public async ValueTask<Token> GenerateConfirmationToken(string userId, int reasonCode)
-            => await tokenProcessingService.GenerateConfirmationToken(userId, reasonCode);
-
-        public async ValueTask<Token> Login(string username, string password)
-        {
-            var user = ssoUserProcessingService.Login(username, password);
-            sessionService.SetUser(user);
-            var token = await tokenProcessingService.AddTokenForUser(user.Id);
-            sessionService.SetString("token", token.Id);
-            return token;
-        }
-
-        public async ValueTask Logout(string tokenId = null)
-        {
-            tokenId ??= sessionService.GetString("token");
-            sessionService.SetString("token", null);
-            sessionService.SetUser(null);
-            await tokenProcessingService.DeleteTokenAsync(tokenId);
-        }
-
         public SSOUser GetUserByTokenId(string tokenId)
-            => ssoUserProcessingService
-                .GetAllSSOUsers()
-                .FirstOrDefault(u => u.Tokens.Any(t => t.Id == tokenId));
+            => ssoUserProcessingService.FindByTokenId(tokenId);
 
         public SSOUser GetSSOUserById(string id)
         {
@@ -75,10 +53,22 @@ namespace Security.Services.Services.Orchestration
             }));
         }
 
+        static void ValidateRegisterForm(RegisterUser registerForm)
+        {
+            if (!registerForm.Email.Contains('@'))
+                throw new Exception("Invalid email provided");
+
+            if (string.IsNullOrEmpty(registerForm.DisplayName))
+                throw new Exception("Display name cannot be empty");
+
+            if (string.IsNullOrEmpty(registerForm.Password))
+                throw new Exception("Password cannot be empty");
+        }
+
         public async ValueTask ChangePassword(string oldPassword, string newPassword)
         {
             var user = sessionService.GetUser();
-            ssoUserProcessingService.Login(user.Id, oldPassword);
+            ssoUserProcessingService.FindByUserAndPassword(user.Id, oldPassword);
             user.PasswordHash = newPassword;
             await ssoUserProcessingService.UpdateSSOUserAsync(user);
         }
@@ -112,18 +102,6 @@ namespace Security.Services.Services.Orchestration
                 throw new SecurityException("Access Denied!");
 
             return user;
-        }
-
-        static void ValidateRegisterForm(RegisterUser registerForm)
-        {
-            if (!registerForm.Email.Contains('@'))
-                throw new Exception("Invalid email provided");
-
-            if (string.IsNullOrEmpty(registerForm.DisplayName))
-                throw new Exception("Display name cannot be empty");
-
-            if (string.IsNullOrEmpty(registerForm.Password))
-                throw new Exception("Password cannot be empty");
         }
     }
 }

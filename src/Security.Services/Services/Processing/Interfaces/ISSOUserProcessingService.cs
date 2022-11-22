@@ -8,6 +8,7 @@ namespace Security.Services.Services.Processing.Interfaces
         ValueTask<SSOUser> UpdateSSOUserAsync(SSOUser item);
         ValueTask DeleteSSOUserAsync(SSOUser item);
         IQueryable<SSOUser> GetAllSSOUsers(bool ignoreFilters = false);
-        SSOUser Login(string username, string password);
+        SSOUser FindByUserAndPassword(string username, string password);
+        SSOUser FindByTokenId(string tokenId);
     }
 }

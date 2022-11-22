@@ -72,7 +72,7 @@ namespace Security.UserManager
 
         public static void AddOrchestrations(this IServiceCollection services)
         {
-            services.AddTransient<ISSOUserAuthenticationOrchestrationService, SSOUserAuthenticationOrchestrationService>();
+            services.AddTransient<ISSOUserOrchestrationService, SSOUserOrchestrationService>();
         }
 
         public static void AddAspNet(this IServiceCollection services)
