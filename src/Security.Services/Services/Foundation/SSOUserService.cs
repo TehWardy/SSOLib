@@ -12,15 +12,7 @@ namespace Security.Services.Foundation
             => this.ssoUserBroker = storageBroker;
 
         public async ValueTask<SSOUser> AddSSOUserAsync(SSOUser item)
-        {
-            var userIdCount = ssoUserBroker.GetAllSSOUsers(true)
-                .Count(sso => sso.Id == item.Id);
-
-            if (userIdCount > 0)
-                item.Id += userIdCount;
-
-            return await ssoUserBroker.AddSSOUserAsync(item);
-        }
+            => await ssoUserBroker.AddSSOUserAsync(item);
 
         public async ValueTask DeleteSSOUserAsync(SSOUser item)
             => await ssoUserBroker.DeleteSSOUserAsync(item);

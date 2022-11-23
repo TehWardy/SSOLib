@@ -15,7 +15,6 @@ namespace Security.Services.Tests.Foundation
             SSOUser inputSSOUser = RandomUser(RandomString());
             SSOUser expectedSSOUser = inputSSOUser.DeepClone();
 
-            userBrokerMock.Setup(broker => broker.GetAllSSOUsers(false)).Returns(Array.Empty<SSOUser>().AsQueryable());
             userBrokerMock.Setup(broker => broker.AddSSOUserAsync(inputSSOUser)).ReturnsAsync(expectedSSOUser);
 
             // when
@@ -24,7 +23,6 @@ namespace Security.Services.Tests.Foundation
             // then
             actualSSOUser.Should().BeEquivalentTo(expectedSSOUser);
 
-            userBrokerMock.Verify(broker => broker.GetAllSSOUsers(false), Times.Once);
             userBrokerMock.Verify(broker => broker.AddSSOUserAsync(inputSSOUser), Times.Once);
             userBrokerMock.VerifyNoOtherCalls();
         }

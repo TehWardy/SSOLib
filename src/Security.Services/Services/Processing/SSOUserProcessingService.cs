@@ -1,4 +1,5 @@
 ﻿using Security.Data.Brokers.Encryption;
+using Security.Data.Brokers.Storage;
 using Security.Data.Interfaces;
 using Security.Objects.Entities;
 using Security.Services.Services.Foundation.Interfaces;
@@ -21,7 +22,14 @@ namespace Security.Services.Processing
         public async ValueTask<SSOUser> RegisterSSOUserAsync(SSOUser user)
         {
             ValidateSSOUser(user);
+            var userIdCount = ssoUserService.GetAllSSOUsers(true)
+                .Count(sso => sso.Id == user.Id);
+
+            if (userIdCount > 0)
+                user.Id += userIdCount;
+
             user.PasswordHash = encryptionBroker.Encrypt(user.PasswordHash);
+
             return await ssoUserService.AddSSOUserAsync(user);
         }
 
