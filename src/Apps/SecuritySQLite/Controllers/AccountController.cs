@@ -80,14 +80,75 @@ namespace SecuritySQLite.Controllers
             }
         }
 
-        [HttpPost("ChangePassword")]
-        public async ValueTask<IActionResult> ChangePassword(ChangePasswordRequest request)
+        [HttpPost("ForgotPassword")]
+        public async ValueTask<IActionResult> ForgotPassword(string userId)
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await userManagerService.ChangePassword(request.OldPassword, request.NewPassword);
-            return Ok();
+            try
+            {
+                await authenticationService.GenerateForgotPasswordToken(userId);
+                return Ok();
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex);
+            }
+            catch (SecurityException ex)
+            {
+                return Unauthorized(ex);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost("ConfirmForgotPassword")]
+        public async ValueTask<IActionResult> ConfirmForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordRequest)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await userManagerService.ConfirmForgotPassword(forgotPasswordRequest.Token, forgotPasswordRequest.Password);
+                return Ok();
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex);
+            }
+            catch (SecurityException ex)
+            {
+                return Unauthorized(ex);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost("ConfirmRegistration")]
+        public async ValueTask<IActionResult> ConfirmRegistration(string confirmationToken)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await userManagerService.ConfirmRegistration(confirmationToken);
+                return Ok();
+            }
+            catch (SecurityException ex)
+            {
+                return Unauthorized(ex);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
     }
 }

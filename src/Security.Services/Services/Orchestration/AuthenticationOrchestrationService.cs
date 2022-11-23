@@ -21,9 +21,6 @@ namespace Security.Services.Services.Orchestration
             this.sessionProcessingService = sessionProcessingService;
         }
 
-        public async ValueTask<Token> GenerateConfirmationToken(string userId, int reasonCode)
-            => await tokenProcessingService.GenerateConfirmationToken(userId, reasonCode);
-
         public async ValueTask<Token> LoginAsync(string username, string password)
         {
             var user = ssoUserProcessingService.FindByUserAndPassword(username, password);
@@ -42,6 +39,19 @@ namespace Security.Services.Services.Orchestration
             sessionProcessingService.SetString("token", null);
             sessionProcessingService.SetUser(null);
             await tokenProcessingService.DeleteTokenAsync(tokenId);
+        }
+
+        public async ValueTask<Token> GenerateForgotPasswordToken(string id)
+        {
+            var userId = ssoUserProcessingService.GetAllSSOUsers(true)
+                .Where(u => u.Id == id || u.Email == id)
+                .Select(u => u.Id)
+                .FirstOrDefault();
+
+            if (userId == null)
+                throw new SecurityException("Access Denied!");
+
+            return await tokenProcessingService.GenerateForgottenPasswordToken(userId);
         }
     }
 }

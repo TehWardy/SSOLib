@@ -36,16 +36,17 @@ namespace SecuritySQLite.Controllers
                 ? Ok(await userManagerService.Register(registerForm))
                 : BadRequest(ModelState);
 
-        [HttpPost("ChangePassword")]
-        public async ValueTask<IActionResult> ChangePassword(ChangePasswordRequest request)
+        [HttpPost("ForgotPassword")]
+        public async ValueTask<IActionResult> ChangePassword(string userId)
         {
             if (ModelState.IsValid)
             {
-                await userManagerService.ChangePassword(request.OldPassword, request.NewPassword);
+                await authenticationService.GenerateForgotPasswordToken(userId);
                 return Ok();
             }
             else
                 return BadRequest(ModelState);
         }
+
     }
 }

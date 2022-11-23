@@ -7,6 +7,10 @@ namespace Security.Services.Services.Processing.Interfaces
         ValueTask<Token> AddTokenForUserIdAsync(string userId);
         ValueTask DeleteTokenAsync(string tokenId);
         Token GetTokenById(string id);
-        ValueTask<Token> GenerateConfirmationToken(string userId, int reasonCode);
+
+        Token GetForgottenPasswordToken(string tokenId);
+        Token GetConfirmationToken(string tokenId);
+        ValueTask<Token> GenerateForgottenPasswordToken(string userId);
+        ValueTask<Token> GenerateConfirmationToken(string userId);
     }
 }

@@ -22,31 +22,15 @@ namespace Security.Services.Services.Orchestration
             this.sessionService = sessionService;
         }
 
-        public SSOUser GetUserByTokenId(string tokenId)
-            => ssoUserProcessingService.FindByTokenId(tokenId);
-
-        public SSOUser GetSSOUserById(string id)
-        {
-            var user = ssoUserProcessingService
-                .GetAllSSOUsers()
-                .FirstOrDefault(u => u.Id == id);
-
-            if (user is null)
-                throw new SecurityException("Access Denied.");
-
-            return user;
-        }
-
-        public SSOUser GetSSOUserFromSession()
-            => sessionService.GetUser();
-
         public async ValueTask<SSOUser> Register(RegisterUser registerForm)
         {
             ValidateRegisterForm(registerForm);
 
             var mappedUser = MapToSSOUser(registerForm);
 
-            return await ssoUserProcessingService.RegisterSSOUserAsync(mappedUser);
+            var result = await ssoUserProcessingService.RegisterSSOUserAsync(mappedUser);
+            await tokenProcessingService.GenerateConfirmationToken(result.Id);
+            return result;
         }
 
         static void ValidateRegisterForm(RegisterUser registerForm)
@@ -71,43 +55,42 @@ namespace Security.Services.Services.Orchestration
                 PhoneNumber = registerForm.PhoneNumber
             };
 
-        public async ValueTask ChangePassword(string oldPassword, string newPassword)
-        {
-            var user = sessionService.GetUser();
-            ssoUserProcessingService.FindByUserAndPassword(user.Id, oldPassword);
-            user.PasswordHash = newPassword;
-            await ssoUserProcessingService.UpdateSSOUserAsync(user);
-        }
-
-        public async ValueTask ConfirmForgotPassword(string tokenId, string newPassword)
-        {
-            var user = ValidateConfirmationToken(tokenId);
-            user.PasswordHash = newPassword;
-            await ssoUserProcessingService.UpdateSSOUserAsync(user);
-        }
-
         public async ValueTask ConfirmRegistration(string tokenId)
         {
-            var user = ValidateConfirmationToken(tokenId);
-            user.EmailConfirmed = true;
-            await ssoUserProcessingService.UpdateSSOUserAsync(user);
-        }
+            var token = tokenProcessingService.GetConfirmationToken(tokenId);
 
-        SSOUser ValidateConfirmationToken(string tokenId)
-        {
-            var token = tokenProcessingService.GetTokenById(tokenId);
-
-            if (token == null || token.Expires < DateTimeOffset.UtcNow)
+            if (token == null)
                 throw new SecurityException("Access Denied!");
 
             var user = ssoUserProcessingService
-                .GetAllSSOUsers()
+                .GetAllSSOUsers(true)
                 .FirstOrDefault(u => u.Id == token.UserName);
 
             if (user == null)
                 throw new SecurityException("Access Denied!");
 
-            return user;
+            user.EmailConfirmed = true;
+            await ssoUserProcessingService.UpdateSSOUserAsync(user);
+            await tokenProcessingService.DeleteTokenAsync(token.Id);
+        }
+
+        public async ValueTask ConfirmForgotPassword(string tokenId, string newPassword)
+        {
+            var token = tokenProcessingService.GetForgottenPasswordToken(tokenId);
+
+            if (token == null)
+                throw new SecurityException("Access Denied!");
+
+            var user = ssoUserProcessingService
+                .GetAllSSOUsers(true)
+                .FirstOrDefault(u => u.Id == token.UserName);
+
+            if (user == null)
+                throw new SecurityException("Access Denied!");
+
+            user.PasswordHash = newPassword;
+            await ssoUserProcessingService.UpdateSSOUserAsync(user);
+            await tokenProcessingService.DeleteTokenAsync(token.Id);
         }
     }
 }

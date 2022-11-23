@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Security.AcceptanceTests.Clients
 {
@@ -21,6 +22,7 @@ namespace Security.AcceptanceTests.Clients
     {
         readonly WebApplicationFactory<Program> webApplicationFactory;
         HttpClient Api;
+        public SSODbContext Database { get; set; }
 
         const string Endpoint = "Api/Account/";
 
@@ -31,6 +33,13 @@ namespace Security.AcceptanceTests.Clients
 
             Api = webApplicationFactory.CreateClient();
             Api.Authenticate("TestUser@corporatelinx.com", "TestPass01!").AsTask().Wait();
+
+            using var scope = webApplicationFactory.Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+
+            Database = new SSODbContext(
+                scopedServices.GetRequiredService<IConfiguration>(),
+                scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
         }
 
         public void AddBearerAuthentication(string bearer)
@@ -59,6 +68,20 @@ namespace Security.AcceptanceTests.Clients
         public async ValueTask<SSOUser> Me(string query = "")
             => await Api.GetAsync<SSOUser>(Endpoint + "Me" + query);
 
+        public async ValueTask PostAsync(string query, object content)
+        {
+            var request = await Api.PostAsync(Endpoint + query, new StringContent(content.ToJson(), Encoding.UTF8, "application/json"));
+
+            if ((int)request.StatusCode == 500)
+                throw new InternalServerErrorException(await request.Content.ReadAsStringAsync());
+
+            if ((int)request.StatusCode == 400)
+                throw new BadRequestException(await request.Content.ReadAsStringAsync());
+
+            request.EnsureSuccessStatusCode();
+        }
+
+
         public async ValueTask<SSOUser> RegisterAsync(RegisterUser registerUser, string query = "")
         {
             var content = new StringContent(registerUser.ToJson(), Encoding.UTF8, "application/json");
@@ -84,34 +107,26 @@ namespace Security.AcceptanceTests.Clients
 
         public async Task TearDown(string ssoUserId)
         {
-            using var scope = webApplicationFactory.Services.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            var encryptionBroker = scopedServices.GetService<IPasswordEncryptionBroker>();
-
-            using var database = new SSODbContext(
-                scopedServices.GetRequiredService<IConfiguration>(),
-                scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
-
-            var user = database.Users
+            var user = Database.Users
                 .IgnoreQueryFilters()
                 .FirstOrDefault(u => u.Id == ssoUserId);
 
             if(user != null)
             {
-                var tokens = database.Tokens
+                var tokens = Database.Tokens
                     .IgnoreQueryFilters()
                     .Where(t => t.UserName == user.Id)
                     .ToList();
 
-                var userRoles = database.UserRoles
+                var userRoles = Database.UserRoles
                     .IgnoreQueryFilters()
                     .Where(r => r.User.Id == user.Id)
                     .ToList();
 
-                database.Tokens.RemoveRange(tokens);
-                database.UserRoles.RemoveRange(userRoles);
-                database.Users.Remove(user);
-                await database.SaveChangesAsync();
+                Database.Tokens.RemoveRange(tokens);
+                Database.UserRoles.RemoveRange(userRoles);
+                Database.Users.Remove(user);
+                await Database.SaveChangesAsync();
             }
         }
     }

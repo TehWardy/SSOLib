@@ -26,7 +26,8 @@ namespace Security.Services.Processing
 
         public Token GetTokenById(string id)
         {
-            var token = tokenService.GetAllTokens().FirstOrDefault(t => t.Id == id && t.Expires >= DateTimeOffset.Now);
+            var token = tokenService.GetAllTokens()
+                .FirstOrDefault(t => t.Id == id && t.Expires >= DateTimeOffset.Now);
 
             if (token == null)
                 throw new SecurityException("Access Denied!");
@@ -34,7 +35,26 @@ namespace Security.Services.Processing
             return token;
         }
 
-        public async ValueTask<Token> GenerateConfirmationToken(string userId, int reasonCode)
-            => await tokenService.AddTokenAsync(userId, reasonCode);
+        public async ValueTask<Token> GenerateConfirmationToken(string userId)
+            => await tokenService.AddTokenAsync(userId, (int)TokenUse.Confirmation);
+
+        public async ValueTask<Token> GenerateForgottenPasswordToken(string userId)
+            => await tokenService.AddTokenAsync(userId, (int)TokenUse.PasswordReset);
+
+        public Token GetForgottenPasswordToken(string tokenId)
+        {
+            int reasonCode = (int)TokenUse.PasswordReset;
+
+            return tokenService.GetAllTokens(ignoreFilters: true)
+                .FirstOrDefault(r => r.Expires >= DateTimeOffset.Now && r.Reason == reasonCode && r.Id == tokenId);
+        }
+
+        public Token GetConfirmationToken(string tokenId)
+        {
+            int reasonCode = (int)TokenUse.Confirmation;
+
+            return tokenService.GetAllTokens(ignoreFilters: true)
+                .FirstOrDefault(r => r.Expires >= DateTimeOffset.Now && r.Reason == reasonCode && r.Id == tokenId);
+        }
     }
 }

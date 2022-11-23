@@ -16,4 +16,11 @@ namespace Security.Objects.Entities
 
         public virtual SSOUser User { get; set; }
     }
+
+    public enum TokenUse
+    {
+        Auth,
+        PasswordReset,
+        Confirmation
+    }
 }

@@ -53,11 +53,12 @@ namespace Security.Services.Processing
 
         public async ValueTask<SSOUser> UpdateSSOUserAsync(SSOUser user)
         {
-            var dbUser = GetAllSSOUsers().FirstOrDefault(u => u.Id == user.Id);
+            var dbUser = GetAllSSOUsers()
+                .FirstOrDefault(u => u.Id == user.Id);
 
             string encryptedPassword = encryptionBroker.Encrypt(user.PasswordHash);
 
-            if (user.PasswordHash != encryptedPassword)
+            if (!encryptionBroker.EncryptedAndPlainTextAreEqual(dbUser.PasswordHash, user.PasswordHash))
                 user.PasswordHash = encryptionBroker.Encrypt(user.PasswordHash);
 
             return await ssoUserService.UpdateSSOUserAsync(user);
