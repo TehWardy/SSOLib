@@ -111,7 +111,7 @@ namespace Security.AcceptanceTests.Clients
                 .IgnoreQueryFilters()
                 .FirstOrDefault(u => u.Id == ssoUserId);
 
-            if(user != null)
+            if (user != null)
             {
                 var tokens = Database.Tokens
                     .IgnoreQueryFilters()
@@ -120,7 +120,7 @@ namespace Security.AcceptanceTests.Clients
 
                 var userRoles = Database.UserRoles
                     .IgnoreQueryFilters()
-                    .Where(r => r.User.Id == user.Id)
+                    .Where(r => r.UserId == user.Id)
                     .ToList();
 
                 Database.Tokens.RemoveRange(tokens);

@@ -45,16 +45,26 @@ namespace Security.Services.Processing
         {
             int reasonCode = (int)TokenUse.PasswordReset;
 
-            return tokenService.GetAllTokens(ignoreFilters: true)
-                .FirstOrDefault(r => r.Expires >= DateTimeOffset.Now && r.Reason == reasonCode && r.Id == tokenId);
+            var token = tokenService.GetAllTokens(ignoreFilters: true)
+                .FirstOrDefault(r => r.Reason == reasonCode && r.Id == tokenId);
+
+            if (token.Expires < DateTimeOffset.Now)
+                return null;
+
+            return token;
         }
 
         public Token GetConfirmationToken(string tokenId)
         {
             int reasonCode = (int)TokenUse.Confirmation;
 
-            return tokenService.GetAllTokens(ignoreFilters: true)
-                .FirstOrDefault(r => r.Expires >= DateTimeOffset.Now && r.Reason == reasonCode && r.Id == tokenId);
+            var token = tokenService.GetAllTokens(ignoreFilters: true)
+                .FirstOrDefault(r => r.Reason == reasonCode && r.Id == tokenId);
+
+            if (token.Expires < DateTimeOffset.Now)
+                return null;
+
+            return token;
         }
     }
 }

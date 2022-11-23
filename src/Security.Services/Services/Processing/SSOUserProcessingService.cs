@@ -64,9 +64,7 @@ namespace Security.Services.Processing
             var dbUser = GetAllSSOUsers()
                 .FirstOrDefault(u => u.Id == user.Id);
 
-            string encryptedPassword = encryptionBroker.Encrypt(user.PasswordHash);
-
-            if (!encryptionBroker.EncryptedAndPlainTextAreEqual(dbUser.PasswordHash, user.PasswordHash))
+            if (dbUser.PasswordHash != user.PasswordHash && !encryptionBroker.EncryptedAndPlainTextAreEqual(dbUser.PasswordHash, user.PasswordHash))
                 user.PasswordHash = encryptionBroker.Encrypt(user.PasswordHash);
 
             return await ssoUserService.UpdateSSOUserAsync(user);

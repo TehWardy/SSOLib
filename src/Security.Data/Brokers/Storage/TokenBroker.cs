@@ -16,7 +16,7 @@ namespace Security.Data.Brokers.Storage
         {
             using var context = contextFactory.CreateDbContext();
 
-            var entityEntry = await context.Tokens.AddAsync(token);
+            var entityEntry = context.Tokens.Add(token);
             await context.SaveChangesAsync();
 
             return entityEntry.Entity;
