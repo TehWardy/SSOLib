@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Security.Data
 {
-    public class AesCrypto<T> : ICrypto<T>
+    public class AesCrypto<T> : ISymmetricCrypto<T>
     {
         readonly string decryptionKey;
         readonly AesThenHmac crypto = new();

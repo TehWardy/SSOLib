@@ -33,6 +33,7 @@
     <ProjectReference Include="..\Security.Objects\Security.Objects.csproj" />
     <ProjectReference Include="..\Security.Data.EF.MSSQL\Security.Data.EF.MSSQL.csproj" />
     <ProjectReference Include="..\SharedObjects\SharedObjects.csproj" />
+    <ProjectReference Include="..\Security.Data.EF.SQLite\Security.Data.EF.SQLite.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿namespace Security.Data.Interfaces
 {
-    public interface ICrypto<T>
+    public interface ISymmetricCrypto<T>
     {
         string Encrypt(T source, string key);
         string Encrypt(T source);

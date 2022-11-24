@@ -2,11 +2,11 @@
 
 namespace Security.Data.Brokers.Encryption
 {
-    public class PasswordEncryptionBroker : IPasswordEncryptionBroker
+    public class PasswordEncryptionBrokerAESHMAC : IPasswordEncryptionBroker
     {
-        private readonly ICrypto<string> crypto;
+        private readonly ISymmetricCrypto<string> crypto;
 
-        public PasswordEncryptionBroker(ICrypto<string> crypto)
+        public PasswordEncryptionBrokerAESHMAC(ISymmetricCrypto<string> crypto)
         {
             this.crypto = crypto;
         }

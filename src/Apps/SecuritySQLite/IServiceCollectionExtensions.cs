@@ -9,21 +9,6 @@ namespace SecuritySQLite
 {
     public static partial class IServiceCollectionExtensions
     {
-        public static string SSOUserId = "TestUser1";
-
-        public static void AddModelBuildProviders(this IServiceCollection services, IConfiguration config)
-        {
-            switch (config.GetSection("Settings")["DbType"])
-            {
-                case "sqlite":
-                    services.AddTransient<ISecurityModelBuildProvider, SecuritySQLiteModelBuildProvider>();
-                    break;
-                default:
-                    services.AddTransient<ISecurityModelBuildProvider, SecurityMSSQLModelBuildProvider>();
-                    break;
-            }
-        }
-
         public static void AddAspNetCore(this IServiceCollection services)
         {
             _ = services.AddResponseCompression();

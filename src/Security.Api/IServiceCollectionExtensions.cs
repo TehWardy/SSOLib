@@ -1,4 +1,5 @@
-﻿using Security.Data;
+﻿using Security.Api.DTOs;
+using Security.Data;
 using Security.Data.Brokers.Authentication;
 using Security.Data.Brokers.Encryption;
 using Security.Data.Brokers.Serialization;
@@ -22,15 +23,16 @@ namespace Security.UserManager
 {
     public static class IServiceCollectionExtensions
     {
-        public static void AddSecurity(this IServiceCollection services, IConfiguration configuration, Action<IServiceCollection> dbSetupAction)
+        public static void AddSecurity(this IServiceCollection services, IConfiguration configuration, Action<SecurityBuilderOptions> dbSetupAction)
         {
-            dbSetupAction(services);
+            var builderOptions = new SecurityBuilderOptions(services, configuration);
+            dbSetupAction(builderOptions);
+            builderOptions.Build();
 
             services.AddDbContextPool<SSODbContext>(opt => { });
             services.AddDbContextFactory<SSODbContext>();
             services.AddTransient<ISSODbContextFactory, SSODbContextFactory>();
             services.AddTransient<IIdentitySSODbContextFactory, IdentitySSODbContextFactory>();
-            services.AddTransient<ICrypto<string>>(_ => new AesCrypto<string>(configuration.GetSection("Settings")["DecryptionKey"]));
             services.AddTransient<ISSOAuthInfo>((IServiceProvider provider)
                 => provider.GetService<ISSOAuthInfoOrchestrationService>().GetSSOAuthInfo()
             );
@@ -54,7 +56,6 @@ namespace Security.UserManager
             services.AddTransient<ITokenBroker, TokenBroker>();
             services.AddTransient<IUserEventBroker, UserEventBroker>();
 
-            services.AddTransient<IPasswordEncryptionBroker, PasswordEncryptionBroker>();
             services.AddTransient<IIdentityBroker, IdentityBroker>();
             services.AddTransient<ISerializationBroker, SerializationBroker>();
         }
