@@ -27,10 +27,13 @@ namespace Security.Services.Processing
         public Token GetTokenById(string id)
         {
             var token = tokenService.GetAllTokens()
-                .FirstOrDefault(t => t.Id == id && t.Expires >= DateTimeOffset.Now);
+                .FirstOrDefault(t => t.Id == id);
 
             if (token == null)
-                throw new SecurityException("Access Denied!");
+                return null;
+
+            if (token.Expires < DateTimeOffset.Now)
+                return null;
 
             return token;
         }

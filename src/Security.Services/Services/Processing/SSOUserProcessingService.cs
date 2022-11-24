@@ -22,7 +22,7 @@ namespace Security.Services.Processing
         public async ValueTask<SSOUser> RegisterSSOUserAsync(SSOUser user)
         {
             ValidateSSOUser(user);
-            var userIdCount = ssoUserService.GetAllSSOUsers(true)
+            var userIdCount = ssoUserService.GetAllSSOUsers(ignoreFilters: true)
                 .Count(sso => sso.Id == user.Id);
 
             if (userIdCount > 0)
@@ -40,8 +40,7 @@ namespace Security.Services.Processing
         {
             ValidateUsername(username);
 
-            var user = ssoUserService.GetAllSSOUsers(ignoreFilters: true)
-                .FirstOrDefault(s => s.Id == username || s.Email == username);
+            var user = FindById(username);
 
             if (user == null)
                 throw new SecurityException("Access Denied!");
@@ -52,9 +51,9 @@ namespace Security.Services.Processing
             return user;
         }
 
-        public SSOUser FindByTokenId(string tokenId)
-            => ssoUserService.GetAllSSOUsers()
-                .FirstOrDefault(u => u.Tokens.Any(t => t.Id == tokenId));
+        public SSOUser FindById(string id)
+            => ssoUserService.GetAllSSOUsers(ignoreFilters: true)
+                .FirstOrDefault(u => u.Id == id || u.Email == id);
 
         public IQueryable<SSOUser> GetAllSSOUsers(bool ignoreFilters = false)
             => ssoUserService.GetAllSSOUsers(ignoreFilters);

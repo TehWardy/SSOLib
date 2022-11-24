@@ -38,8 +38,10 @@
 
   <ItemGroup>
     <None Remove="Brokers\Serialization\" />
+    <None Remove="Brokers\Requests\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Brokers\Serialization\" />
+    <Folder Include="Brokers\Requests\" />
   </ItemGroup>
 </Project>

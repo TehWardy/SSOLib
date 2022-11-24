@@ -2,6 +2,7 @@
 using Security.Data;
 using Security.Data.Brokers.Authentication;
 using Security.Data.Brokers.Encryption;
+using Security.Data.Brokers.Requests;
 using Security.Data.Brokers.Serialization;
 using Security.Data.Brokers.Storage;
 using Security.Data.Brokers.Storage.Interfaces;
@@ -46,6 +47,7 @@ namespace Security.UserManager
 
         public static void AddBrokers(this IServiceCollection services)
         {
+            services.AddTransient<IHttpRequestBroker, HttpRequestBroker>();
             services.AddTransient<ISessionBroker, SessionBroker>();
             services.AddTransient<ISSOPrivilegeBroker, SSOPrivilegeBroker>();
             services.AddTransient<ISSORoleBroker, SSORoleBroker>();

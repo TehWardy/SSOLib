@@ -43,10 +43,7 @@ namespace Security.Services.Services.Orchestration
 
         public async ValueTask<Token> GenerateForgotPasswordToken(string id)
         {
-            var userId = ssoUserProcessingService.GetAllSSOUsers(true)
-                .Where(u => u.Id == id || u.Email == id)
-                .Select(u => u.Id)
-                .FirstOrDefault();
+            var userId = ssoUserProcessingService.FindById(id)?.Id;
 
             if (userId == null)
                 throw new SecurityException("Access Denied!");

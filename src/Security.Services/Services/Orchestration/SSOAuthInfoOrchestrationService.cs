@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Security.Data.Brokers.Requests;
 using Security.Objects;
 using Security.Services.Services.Foundation.Interfaces;
 using Security.Services.Services.Processing.Interfaces;
@@ -9,46 +10,58 @@ namespace Security.UserManager.Services.Foundation
 {
     public class SSOAuthInfoOrchestrationService : ISSOAuthInfoOrchestrationService
     {
-        readonly HttpRequest request;
         readonly ISessionProcessingService sessionService;
         readonly ISSOUserProcessingService userService;
+        private readonly ITokenProcessingService tokenService;
+        private readonly IHttpRequestBroker httpRequestBroker;
 
         public SSOAuthInfoOrchestrationService(
-            HttpRequest request,
             ISessionProcessingService sessionService,
-            ISSOUserProcessingService userService)
+            ISSOUserProcessingService userService,
+            ITokenProcessingService tokenService,
+            IHttpRequestBroker httpRequestBroker)
         {
-            this.request = request;
             this.sessionService = sessionService;
             this.userService = userService;
+            this.tokenService = tokenService;
+            this.httpRequestBroker = httpRequestBroker;
         }
 
         public ISSOAuthInfo GetSSOAuthInfo()
         {
-            var bearerAuthInfo = GetBearerAuthentication();
-
-            if (bearerAuthInfo != null)
-                return bearerAuthInfo;
+            if (httpRequestBroker.HasHeader("Authorization"))
+                return GetFromAuthenticationHeader();
 
             var sessionAuthInfo = GetFromSession();
 
             if (sessionAuthInfo != null)
                 return sessionAuthInfo;
 
+            return new SSOAuthInfo { SSOUserId = "Guest" };
+        }
+
+        private ISSOAuthInfo GetFromAuthenticationHeader()
+        {
+            string authHeaderValue = httpRequestBroker.Header("Authorization");
+
+            var bearerAuthInfo = GetBearerAuthentication(authHeaderValue);
+
+            if (bearerAuthInfo != null)
+                return bearerAuthInfo;
+
             try
             {
-                var basicAuthInfo = GetBasicAuthentication();
+                var basicAuthInfo = GetBasicAuthentication(authHeaderValue);
 
                 if (basicAuthInfo != null)
                     return basicAuthInfo;
             }
-
-            catch(SecurityException)
+            catch (SecurityException)
             {
                 return new SSOAuthInfo { SSOUserId = "Guest" };
             }
 
-            return new SSOAuthInfo { SSOUserId = "Guest" };
+            return null;
         }
 
         ISSOAuthInfo GetFromSession()
@@ -61,14 +74,19 @@ namespace Security.UserManager.Services.Foundation
             return new SSOAuthInfo { SSOUserId = user.Id };
         }
 
-        ISSOAuthInfo GetBearerAuthentication()
+        ISSOAuthInfo GetBearerAuthentication(string authHeaderValue)
         {
-            var tokenId = GetBearerToken();
+            var tokenId = GetBearerToken(authHeaderValue);
 
             if (tokenId == null)
                 return null;
 
-            var user = userService.FindByTokenId(tokenId);
+            var token = tokenService.GetTokenById(tokenId);
+
+            if (token == null)
+                return null;
+
+            var user = userService.FindById(token.UserName);
 
             if (user == null)
                 return null;
@@ -76,15 +94,10 @@ namespace Security.UserManager.Services.Foundation
             return new SSOAuthInfo { SSOUserId = user.Id };
         }
 
-        ISSOAuthInfo GetBasicAuthentication()
+        ISSOAuthInfo GetBasicAuthentication(string authHeaderValue)
         {
-            if (request != null && request.Headers.ContainsKey("Authorization"))
-            {
-                string auth = request.Headers["Authorization"].ToString();
-
-                if (auth.ToLowerInvariant().StartsWith("basic"))
-                    return AuthenticateBasicAuth(auth);
-            }
+            if (authHeaderValue.ToLowerInvariant().StartsWith("basic"))
+                return AuthenticateBasicAuth(authHeaderValue);
 
             return null;
         }
@@ -111,13 +124,8 @@ namespace Security.UserManager.Services.Foundation
             );
         }
 
-        string GetBearerToken()
+        static string GetBearerToken(string auth)
         {
-            if (request == null || !request.Headers.ContainsKey("Authorization"))
-                return null;
-
-            string auth = request.Headers["Authorization"].ToString();
-
             if (!auth.ToLowerInvariant().StartsWith("bearer"))
                 return null;
 

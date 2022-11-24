@@ -62,9 +62,7 @@ namespace Security.Services.Services.Orchestration
             if (token == null)
                 throw new SecurityException("Access Denied!");
 
-            var user = ssoUserProcessingService
-                .GetAllSSOUsers(true)
-                .FirstOrDefault(u => u.Id == token.UserName);
+            var user = ssoUserProcessingService.FindById(token.UserName);
 
             if (user == null)
                 throw new SecurityException("Access Denied!");
@@ -81,9 +79,7 @@ namespace Security.Services.Services.Orchestration
             if (token == null)
                 throw new SecurityException("Access Denied!");
 
-            var user = ssoUserProcessingService
-                .GetAllSSOUsers(true)
-                .FirstOrDefault(u => u.Id == token.UserName);
+            var user = ssoUserProcessingService.FindById(token.UserName);
 
             if (user == null)
                 throw new SecurityException("Access Denied!");

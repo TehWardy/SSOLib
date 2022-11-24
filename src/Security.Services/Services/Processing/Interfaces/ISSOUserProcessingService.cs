@@ -9,6 +9,6 @@ namespace Security.Services.Services.Processing.Interfaces
         ValueTask DeleteSSOUserAsync(SSOUser item);
         IQueryable<SSOUser> GetAllSSOUsers(bool ignoreFilters = false);
         SSOUser FindByUserAndPassword(string username, string password);
-        SSOUser FindByTokenId(string tokenId);
+        SSOUser FindById(string id);
     }
 }
