@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Security.Data.EF.Interfaces;
+using Security.Objects;
 
 namespace Security.Data.EF
 {
@@ -9,14 +11,24 @@ namespace Security.Data.EF
     {
         private readonly IConfiguration configuration;
         private readonly ISecurityModelBuildProvider modelBuildProvider;
+        private readonly IServiceProvider provider;
 
-        public SSODbContextFactory(IConfiguration configuration, ISecurityModelBuildProvider modelBuildProvider)
+        public SSODbContextFactory(IServiceProvider provider)
         {
-            this.configuration = configuration;
-            this.modelBuildProvider = modelBuildProvider;
+            this.configuration = provider.GetService<IConfiguration>();
+            this.modelBuildProvider = provider.GetService<ISecurityModelBuildProvider>();
+            this.provider = provider;
         }
 
-        public SSODbContext CreateDbContext()
-            => new(configuration, modelBuildProvider);
+        public SSODbContext CreateDbContext(bool ignoreFilters = false)
+        {
+            if(ignoreFilters)
+            {
+                var authInfo = provider.GetService<ISSOAuthInfo>();
+                return new IdentitySSODbContext(configuration, authInfo, modelBuildProvider);
+            }
+
+            return new SSODbContext(configuration, modelBuildProvider);
+        }
     }
 }

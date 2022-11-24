@@ -2,6 +2,6 @@
 {
     public interface ISSODbContextFactory
     {
-        SSODbContext CreateDbContext();
+        SSODbContext CreateDbContext(bool ignoreFilters = false);
     }
 }

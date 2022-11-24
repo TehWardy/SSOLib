@@ -33,7 +33,6 @@ namespace Security.UserManager
             services.AddDbContextPool<SSODbContext>(opt => { });
             services.AddDbContextFactory<SSODbContext>();
             services.AddTransient<ISSODbContextFactory, SSODbContextFactory>();
-            services.AddTransient<IIdentitySSODbContextFactory, IdentitySSODbContextFactory>();
             services.AddTransient<ISSOAuthInfo>((IServiceProvider provider)
                 => provider.GetService<ISSOAuthInfoOrchestrationService>().GetSSOAuthInfo()
             );
