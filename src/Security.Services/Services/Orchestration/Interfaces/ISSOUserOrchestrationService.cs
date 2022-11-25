@@ -1,4 +1,5 @@
-﻿using Security.Objects.DTOs;
+﻿using System.Threading.Tasks;
+using Security.Objects.DTOs;
 using Security.Objects.Entities;
 
 namespace Security.Services.Services.Orchestration.Interfaces

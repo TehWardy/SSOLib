@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Security.Objects.Entities;
 
 namespace Security.Services.Services.Processing.Interfaces

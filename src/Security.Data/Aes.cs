@@ -5,6 +5,9 @@
  * http://creativecommons.org/publicdomain/mark/1.0/ 
  */
 
+using System;
+using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 

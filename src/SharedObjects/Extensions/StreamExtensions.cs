@@ -1,4 +1,6 @@
-﻿namespace SharedObjects.Extensions
+﻿using System.IO;
+
+namespace SharedObjects.Extensions
 {
     public static class StreamExtensions
     {

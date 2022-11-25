@@ -1,4 +1,5 @@
-﻿using Security.Objects.Entities;
+﻿using System.Linq;
+using Security.Objects.Entities;
 
 namespace Security.Data.Brokers.Storage.Interfaces
 {

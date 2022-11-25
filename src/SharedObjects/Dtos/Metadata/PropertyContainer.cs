@@ -1,4 +1,5 @@
-﻿using SharedObjects.Extensions;
+﻿using System.Collections.Generic;
+using SharedObjects.Extensions;
 
 namespace SharedObjects.Dtos.Metadata
 {

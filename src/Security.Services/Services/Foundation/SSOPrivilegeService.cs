@@ -1,4 +1,5 @@
-﻿using Security.Data.Brokers.Storage.Interfaces;
+﻿using System.Linq;
+using Security.Data.Brokers.Storage.Interfaces;
 using Security.Objects.Entities;
 using Security.Services.Foundation.Interfaces;
 

@@ -1,4 +1,5 @@
-﻿using Security.Objects.Entities;
+﻿using System.Threading.Tasks;
+using Security.Objects.Entities;
 
 namespace Security.Services.Services.Orchestration.Interfaces
 {

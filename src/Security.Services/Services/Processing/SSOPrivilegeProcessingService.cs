@@ -1,4 +1,5 @@
-﻿using Security.Objects.Entities;
+﻿using System.Linq;
+using Security.Objects.Entities;
 using Security.Services.Foundation.Interfaces;
 using Security.Services.Services.Processing.Interfaces;
 

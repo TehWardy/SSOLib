@@ -1,4 +1,7 @@
-﻿namespace SharedObjects.Extensions
+﻿using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace SharedObjects.Extensions
 {
     public static class HttpContentExtensions
     {

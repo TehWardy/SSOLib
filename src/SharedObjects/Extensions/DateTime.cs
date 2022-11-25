@@ -1,4 +1,6 @@
-﻿namespace SharedObjects.Extensions
+﻿using System;
+
+namespace SharedObjects.Extensions
 {
     public static class DateTimeExtensions
     {

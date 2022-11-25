@@ -2,7 +2,10 @@
 using Security.Objects.Entities;
 using Security.Services.Services.Orchestration.Interfaces;
 using Security.Services.Services.Processing.Interfaces;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Security;
+using System.Threading.Tasks;
 
 namespace Security.Services.Services.Orchestration
 {
@@ -36,13 +39,13 @@ namespace Security.Services.Services.Orchestration
         static void ValidateRegisterForm(RegisterUser registerForm)
         {
             if (!registerForm.Email.Contains('@'))
-                throw new Exception("Invalid email provided");
+                throw new ValidationException("Invalid email provided");
 
             if (string.IsNullOrEmpty(registerForm.DisplayName))
-                throw new Exception("Display name cannot be empty");
+                throw new ValidationException("Display name cannot be empty");
 
             if (string.IsNullOrEmpty(registerForm.Password))
-                throw new Exception("Password cannot be empty");
+                throw new ValidationException("Password cannot be empty");
         }
 
         private SSOUser MapToSSOUser(RegisterUser registerForm)

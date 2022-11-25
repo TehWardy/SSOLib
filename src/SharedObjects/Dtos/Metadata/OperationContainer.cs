@@ -1,4 +1,6 @@
-﻿namespace SharedObjects.Dtos.Metadata
+﻿using System.Collections.Generic;
+
+namespace SharedObjects.Dtos.Metadata
 {
     public class OperationContainer
     {

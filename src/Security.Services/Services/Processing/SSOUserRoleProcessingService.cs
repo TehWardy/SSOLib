@@ -1,4 +1,5 @@
-﻿using Security.Objects.Entities;
+﻿using System.Threading.Tasks;
+using Security.Objects.Entities;
 using Security.Services.Services.Foundation.Interfaces;
 using Security.Services.Services.Processing.Interfaces;
 

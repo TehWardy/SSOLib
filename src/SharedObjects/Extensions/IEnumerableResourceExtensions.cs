@@ -1,4 +1,7 @@
-﻿namespace SharedObjects.Extensions
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace SharedObjects.Extensions
 {
     public static class IEnumerableResourceExtensions
     {

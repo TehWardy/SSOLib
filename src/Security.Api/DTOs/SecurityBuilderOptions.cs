@@ -7,6 +7,8 @@ using Security.Data.EF.MSSQL;
 using Security.Data.EF.SQLite;
 using Microsoft.Extensions.Caching.SqlServer;
 using Security.Data.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace Security.Api.DTOs
 {
