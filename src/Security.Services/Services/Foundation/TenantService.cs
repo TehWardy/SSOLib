@@ -30,9 +30,7 @@ namespace Security.Services.Services.Foundation
             => await broker.DeleteTenantAsync(tenant);
 
         public IQueryable<Tenant> GetAllTenants()
-        {
-            throw new NotImplementedException();
-        }
+            => broker.GetAllTenants();
 
         public async ValueTask<Tenant> UpdateTenantAsync(Tenant tenant)
         {
