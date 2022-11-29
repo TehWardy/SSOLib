@@ -29,8 +29,6 @@ namespace Security.Services.Services.Foundation
             => await broker.DeleteUserEventAsync(userEvent);
 
         public IQueryable<UserEvent> GetAllUserEvents()
-        {
-            throw new NotImplementedException();
-        }
+            => broker.GetAllUserEvents();
     }
 }
