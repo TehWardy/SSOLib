@@ -19,9 +19,10 @@ namespace Security.Services.Services.Foundation
             this.dateTimeOffsetBroker = dateTimeOffsetBroker;
         }
 
-        public ValueTask<UserEvent> AddUserEventAsync(UserEvent userEvent)
+        public async ValueTask<UserEvent> AddUserEventAsync(UserEvent userEvent)
         {
-            throw new NotImplementedException();
+            userEvent.CreatedOn = dateTimeOffsetBroker.GetCurrentTime();
+            return await broker.AddUserEventAsync(userEvent);
         }
 
         public ValueTask DeleteUserEventAsync(UserEvent userEvent)
