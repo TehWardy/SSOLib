@@ -22,7 +22,7 @@ namespace Security.Services.Tests.Foundation
                 .Returns(expectedTime);
 
             tenantBrokerMock.Setup(tenantBrokerMock =>
-                tenantBrokerMock.AddTenantAsync(inputTenant))
+                tenantBrokerMock.UpdateTenantAsync(inputTenant))
                 .ReturnsAsync(inputTenant);
 
             expectedTenant.LastUpdated = expectedTime;
