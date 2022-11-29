@@ -5,6 +5,7 @@ using Security.Objects.Entities;
 using Security.Services.Services.Foundation;
 using Security.Services.Services.Foundation.Interfaces;
 using System;
+using System.Linq;
 using Tynamix.ObjectFiller;
 
 namespace Security.Services.Tests.Foundation
@@ -21,6 +22,11 @@ namespace Security.Services.Tests.Foundation
             dateTimeOffsetBrokerMock = new Mock<ISecurityDateTimeOffsetBroker>();
             tenantService = new TenantService(tenantBrokerMock.Object, dateTimeOffsetBrokerMock.Object);
         }
+
+        Tenant[] RandomTenants()
+            => Enumerable.Range(1, new Random().Next(10, 20))
+                .Select(_ => RandomTenant())
+                .ToArray();
 
         Tenant RandomTenant()
             => GetTenantFiller().Create();
