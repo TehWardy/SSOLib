@@ -34,10 +34,5 @@ namespace Security.Services.Services.Foundation
         {
             throw new NotImplementedException();
         }
-
-        public ValueTask<UserEvent> UpdateUserEventAsync(UserEvent userEvent)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

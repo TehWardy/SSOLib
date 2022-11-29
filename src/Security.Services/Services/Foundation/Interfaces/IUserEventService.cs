@@ -9,6 +9,5 @@ namespace Security.Services.Services.Foundation.Interfaces
         ValueTask<UserEvent> AddUserEventAsync(UserEvent userEvent);
         ValueTask DeleteUserEventAsync(UserEvent userEvent);
         IQueryable<UserEvent> GetAllUserEvents();
-        ValueTask<UserEvent> UpdateUserEventAsync(UserEvent userEvent);
     }
 }
