@@ -36,9 +36,10 @@ namespace Security.Services.Services.Foundation
             throw new NotImplementedException();
         }
 
-        public ValueTask<Tenant> UpdateTenantAsync(Tenant tenant)
+        public async ValueTask<Tenant> UpdateTenantAsync(Tenant tenant)
         {
-            throw new NotImplementedException();
+            tenant.LastUpdated = dateTimeOffsetBroker.GetCurrentTime();
+            return await broker.UpdateTenantAsync(tenant);
         }
     }
 }
