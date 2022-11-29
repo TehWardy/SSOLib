@@ -17,6 +17,8 @@ namespace Security.Services.Tests.Foundation
             UserEvent expectedUserEvent = inputUserEvent.DeepClone();
             DateTimeOffset expectedTime = DateTimeOffset.Now;
 
+            expectedUserEvent.CreatedOn = expectedTime;
+
             userEventBrokerMock.Setup(userEventBrokerMock =>
                 userEventBrokerMock.AddUserEventAsync(inputUserEvent))
                 .ReturnsAsync(inputUserEvent);
