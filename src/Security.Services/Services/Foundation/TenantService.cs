@@ -26,10 +26,8 @@ namespace Security.Services.Services.Foundation
             return await broker.AddTenantAsync(tenant);
         }
 
-        public ValueTask DeleteTenantAsync(Tenant tenant)
-        {
-            throw new NotImplementedException();
-        }
+        public async ValueTask DeleteTenantAsync(Tenant tenant)
+            => await broker.DeleteTenantAsync(tenant);
 
         public IQueryable<Tenant> GetAllTenants()
         {
