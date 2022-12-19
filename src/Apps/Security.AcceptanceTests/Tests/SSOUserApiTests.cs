@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using Security.AcceptanceTests.Clients;
@@ -27,6 +28,11 @@ namespace Security.AcceptanceTests.Tests
                         User = user.Email,
                         Pass = user.Password
                     };
+
+        static RegisterUser[] RandomRegisterUsers()
+            => Enumerable.Range(1, new Random().Next(10, 20))
+                .Select(_ => RandomRegisterUser())
+                .ToArray();
 
         static RegisterUser RandomRegisterUser()
             => GetRegisterUserFiller().Generate();

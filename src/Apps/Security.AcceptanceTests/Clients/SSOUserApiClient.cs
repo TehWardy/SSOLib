@@ -11,6 +11,7 @@ using Security.Objects.Entities;
 using System.Threading.Tasks;
 using Security.Objects.DTOs;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Security.AcceptanceTests.Clients
 {
@@ -65,6 +66,9 @@ namespace Security.AcceptanceTests.Clients
                 api.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("basic", encoded);
             }
         }
+
+        public async ValueTask<IEnumerable<SSOUser>> GetAllSSOUsersAsync(string query = "")
+            => await api.GetODataCollection<SSOUser>(Endpoint + query);
 
         public async ValueTask<SSOUser> Me(string query = "")
             => await api.GetAsync<SSOUser>(Endpoint + "Me()" + query);
