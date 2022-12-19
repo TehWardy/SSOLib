@@ -18,21 +18,21 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Security.AcceptanceTests.Clients
 {
-    public class UserApiClient
+    public class AccountApiClient
     {
         readonly WebApplicationFactory<Program> webApplicationFactory;
-        HttpClient Api;
+        HttpClient api;
         public SSODbContext Database { get; set; }
 
-        const string Endpoint = "Api/Account/";
+        const string endpoint = "Api/Account/";
 
-        public UserApiClient()
+        public AccountApiClient()
         {
             webApplicationFactory = new();
             webApplicationFactory.EnsureSSOSetupForTesting();
 
-            Api = webApplicationFactory.CreateClient();
-            Api.Authenticate("TestUser@corporatelinx.com", "TestPass01!").AsTask().Wait();
+            api = webApplicationFactory.CreateClient();
+            api.Authenticate("TestUser@corporatelinx.com", "TestPass01!").AsTask().Wait();
 
             using var scope = webApplicationFactory.Services.CreateScope();
             var scopedServices = scope.ServiceProvider;
@@ -42,35 +42,12 @@ namespace Security.AcceptanceTests.Clients
                 scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
         }
 
-        public void AddBearerAuthentication(string bearer)
-        {
-            if (bearer == null)
-                Api.DefaultRequestHeaders.Authorization = null;
-            else
-                Api.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", bearer);
-        }
-
-        public void AddBasicAuthentication(Auth auth)
-        {
-            if (auth == null)
-                Api.DefaultRequestHeaders.Authorization = null;
-            else
-            {
-                string encoded = System.Convert.ToBase64String(Encoding.UTF8.GetBytes(auth.User + ":" + auth.Pass));
-
-                Api.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("basic", encoded);
-            }
-        }
-
         public HttpClient UseNoCookiesApiClient()
-            => Api = webApplicationFactory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-
-        public async ValueTask<SSOUser> Me(string query = "")
-            => await Api.GetAsync<SSOUser>(Endpoint + "Me" + query);
+            => api = webApplicationFactory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
         public async ValueTask PostAsync(string query, object content)
         {
-            var request = await Api.PostAsync(Endpoint + query, new StringContent(content.ToJson(), Encoding.UTF8, "application/json"));
+            var request = await api.PostAsync(endpoint + query, new StringContent(content.ToJson(), Encoding.UTF8, "application/json"));
 
             if ((int)request.StatusCode == 500)
                 throw new InternalServerErrorException(await request.Content.ReadAsStringAsync());
@@ -79,28 +56,12 @@ namespace Security.AcceptanceTests.Clients
                 throw new BadRequestException(await request.Content.ReadAsStringAsync());
 
             request.EnsureSuccessStatusCode();
-        }
-
-
-        public async ValueTask<SSOUser> RegisterAsync(RegisterUser registerUser, string query = "")
-        {
-            var content = new StringContent(registerUser.ToJson(), Encoding.UTF8, "application/json");
-            var request = await Api.PostAsync(Endpoint + "Register" + query, content);
-
-            if ((int)request.StatusCode == 500)
-                throw new InternalServerErrorException(await request.Content.ReadAsStringAsync());
-
-            if ((int)request.StatusCode == 400)
-                throw new BadRequestException(await request.Content.ReadAsStringAsync());
-
-            request.EnsureSuccessStatusCode();
-            return await request.Content.ReadAsAsync<SSOUser>();
         }
 
         public async ValueTask<Token> LoginAsync(Auth auth, string query = "")
         {
             var content = new StringContent(auth.ToJson(), Encoding.UTF8, "application/json");
-            var request = await Api.PostAsync(Endpoint + "Login" + query, content);
+            var request = await api.PostAsync(endpoint + "Login" + query, content);
             request.EnsureSuccessStatusCode();
             return await request.Content.ReadAsAsync<Token>();
         }

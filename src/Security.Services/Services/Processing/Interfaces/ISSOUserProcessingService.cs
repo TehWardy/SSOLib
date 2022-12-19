@@ -12,5 +12,6 @@ namespace Security.Services.Services.Processing.Interfaces
         IQueryable<SSOUser> GetAllSSOUsers(bool ignoreFilters = false);
         SSOUser FindByUserAndPassword(string username, string password);
         SSOUser FindById(string id);
+        SSOUser Me();
     }
 }

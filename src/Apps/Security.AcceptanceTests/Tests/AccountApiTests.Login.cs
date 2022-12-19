@@ -12,12 +12,12 @@ namespace Security.AcceptanceTests.Tests
         {
             //given
             RegisterUser existingRegisterUser = RandomRegisterUser();
-            SSOUser existingSSOUser = await userApiClient.RegisterAsync(existingRegisterUser);
+            SSOUser existingSSOUser = await registerApiClient.RegisterAsync(existingRegisterUser);
 
             Auth inputAuth = RandomAuth(existingRegisterUser);
 
             //when
-            Token actualToken = await userApiClient.LoginAsync(inputAuth);
+            Token actualToken = await accountApiClient.LoginAsync(inputAuth);
 
             //then
             Assert.True(actualToken.UserName == existingSSOUser.Id);

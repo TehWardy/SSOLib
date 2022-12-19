@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Security.AcceptanceTests.Tests
 {
-	public partial class AccountApiTests
+	public partial class RegisterApiTests
 	{
         [Fact]
         public async void ConfirmEmailWorksAsExpected()
@@ -20,8 +20,8 @@ namespace Security.AcceptanceTests.Tests
             Auth inputAuth = RandomAuth(existingRegisterUser);
 
             //when
-            SSOUser expectedSSOUser = await userApiClient.RegisterAsync(existingRegisterUser);
-            var tokenList = userApiClient.Database.Tokens
+            SSOUser expectedSSOUser = await registerApiClient.RegisterAsync(existingRegisterUser);
+            var tokenList = registerApiClient.Database.Tokens
                 .AsNoTracking()
                 .ToList();
 
@@ -33,11 +33,11 @@ namespace Security.AcceptanceTests.Tests
 
             expectedSSOUser.EmailConfirmed = true;
 
-            await userApiClient.PostAsync("ConfirmRegistration?confirmationToken=" + token.Id, null);
-            var loginToken = await userApiClient.LoginAsync(inputAuth);
-            userApiClient.AddBearerAuthentication(loginToken.Id);
+            await registerApiClient.PostAsync("ConfirmRegistration?confirmationToken=" + token.Id, null);
+            var loginToken = await accountApiClient.LoginAsync(inputAuth);
+            ssoUserApiClient.AddBearerAuthentication(loginToken.Id);
 
-            SSOUser actualSSOUser = await userApiClient.Me();
+            SSOUser actualSSOUser = await ssoUserApiClient.Me();
 
             //then
             actualSSOUser.Should().BeEquivalentTo(expectedSSOUser);

@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace Security.Services.Services.Orchestration
 {
-    public class SSOUserOrchestrationService : ISSOUserOrchestrationService
+    public class SSOUserRegistrationOrchestrationService : ISSOUserOrchestrationService
     {
         readonly ISSOUserProcessingService ssoUserProcessingService;
         readonly ITokenProcessingService tokenProcessingService;
         readonly ISessionProcessingService sessionService;
 
-        public SSOUserOrchestrationService(
+        public SSOUserRegistrationOrchestrationService(
             ISSOUserProcessingService ssoUserProcessingService,
             ITokenProcessingService tokenProcessingService,
             ISessionProcessingService sessionService)

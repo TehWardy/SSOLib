@@ -1,4 +1,5 @@
-﻿using Security.Data.Brokers.Encryption;
+﻿using Security.Data.Brokers.Authentication;
+using Security.Data.Brokers.Encryption;
 using Security.Data.Brokers.Storage;
 using Security.Data.Interfaces;
 using Security.Objects.Entities;
@@ -12,18 +13,23 @@ namespace Security.Services.Processing
 {
     public partial class SSOUserProcessingService : ISSOUserProcessingService
     {
-        readonly ISSOUserService ssoUserService;
+        private readonly ISSOUserService ssoUserService;
         private readonly IPasswordEncryptionBroker encryptionBroker;
+        private readonly IIdentityBroker identityBroker;
 
-        public SSOUserProcessingService(ISSOUserService ssoUserService, IPasswordEncryptionBroker encryptionBroker)
+        public SSOUserProcessingService(ISSOUserService ssoUserService,
+            IPasswordEncryptionBroker encryptionBroker,
+            IIdentityBroker identityBroker)
         {         
             this.ssoUserService = ssoUserService;
             this.encryptionBroker = encryptionBroker;
+            this.identityBroker = identityBroker;
         }
 
         public async ValueTask<SSOUser> RegisterSSOUserAsync(SSOUser user)
         {
             ValidateSSOUser(user);
+
             var userIdCount = ssoUserService.GetAllSSOUsers(ignoreFilters: true)
                 .Count(sso => sso.Id == user.Id);
 
@@ -45,6 +51,9 @@ namespace Security.Services.Processing
             var user = FindById(username);
 
             if (user == null)
+                throw new SecurityException("Access Denied!");
+
+            if (user.LockoutEnabled)
                 throw new SecurityException("Access Denied!");
 
             if (!encryptionBroker.EncryptedAndPlainTextAreEqual(user.PasswordHash, password))
@@ -71,6 +80,7 @@ namespace Security.Services.Processing
             return await ssoUserService.UpdateSSOUserAsync(user);
         }
 
-
+        public SSOUser Me()
+            => identityBroker.Me();
     }
 }

@@ -1,31 +1,32 @@
-﻿using Bogus;
+﻿using System;
+using System.Threading.Tasks;
+using Bogus;
 using Security.AcceptanceTests.Clients;
 using Security.Objects.DTOs;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Security.AcceptanceTests.Tests
 {
     [Collection(nameof(AccountTestCollection))]
-    public partial class AccountApiTests
-    {
-        private readonly AccountApiClient accountApiClient;
+    public partial class SSOUserApiTests
+	{
         private readonly RegisterApiClient registerApiClient;
         private readonly SSOUserApiClient ssoUserApiClient;
+        private readonly AccountApiClient accountApiClient;
 
-        public AccountApiTests(AccountApiClient userApiClient, RegisterApiClient registerApiClient, SSOUserApiClient ssoUserApiClient)
-        {
-            this.accountApiClient = userApiClient;
+        public SSOUserApiTests(RegisterApiClient registerApiClient, SSOUserApiClient ssoUserApiClient, AccountApiClient accountApiClient)
+		{
             this.registerApiClient = registerApiClient;
             this.ssoUserApiClient = ssoUserApiClient;
+            this.accountApiClient = accountApiClient;
         }
 
         static Auth RandomAuth(RegisterUser user)
-            => new Auth()
-            {
-                User = user.Email,
-                Pass = user.Password
-            };
+                    => new Auth()
+                    {
+                        User = user.Email,
+                        Pass = user.Password
+                    };
 
         static RegisterUser RandomRegisterUser()
             => GetRegisterUserFiller().Generate();
@@ -46,3 +47,4 @@ namespace Security.AcceptanceTests.Tests
             => await accountApiClient.TearDown(userId);
     }
 }
+

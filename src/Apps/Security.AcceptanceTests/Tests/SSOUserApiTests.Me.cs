@@ -5,23 +5,23 @@ using Xunit;
 
 namespace Security.AcceptanceTests.Tests
 {
-    public partial class AccountApiTests
+    public partial class SSOUserApiTests
     {
         [Fact]
         public async void MeWorksAsExpectedForBearerToken()
         {
             //given
-            userApiClient.UseNoCookiesApiClient();
+            accountApiClient.UseNoCookiesApiClient();
 
             RegisterUser existingRegisterUser = RandomRegisterUser();
-            SSOUser existingSSOUser = await userApiClient.RegisterAsync(existingRegisterUser);
+            SSOUser existingSSOUser = await registerApiClient.RegisterAsync(existingRegisterUser);
 
             Auth inputAuth = RandomAuth(existingRegisterUser);
-            Token token = await userApiClient.LoginAsync(inputAuth);
+            Token token = await accountApiClient.LoginAsync(inputAuth);
 
             //when
-            userApiClient.AddBearerAuthentication(token.Id);
-            SSOUser actualSSOUser = await userApiClient.Me();
+            ssoUserApiClient.AddBearerAuthentication(token.Id);
+            SSOUser actualSSOUser = await ssoUserApiClient.Me();
 
             //then
             actualSSOUser.Should().BeEquivalentTo(existingSSOUser);
@@ -34,13 +34,13 @@ namespace Security.AcceptanceTests.Tests
         {
             //given
             RegisterUser existingRegisterUser = RandomRegisterUser();
-            SSOUser existingSSOUser = await userApiClient.RegisterAsync(existingRegisterUser);
+            SSOUser existingSSOUser = await registerApiClient.RegisterAsync(existingRegisterUser);
 
             Auth inputAuth = RandomAuth(existingRegisterUser);
-            Token token = await userApiClient.LoginAsync(inputAuth);
+            Token token = await ssoUserApiClient.LoginAsync(inputAuth);
 
             //when
-            SSOUser actualSSOUser = await userApiClient.Me();
+            SSOUser actualSSOUser = await ssoUserApiClient.Me();
 
             //then
             actualSSOUser.Should().BeEquivalentTo(existingSSOUser);
@@ -52,16 +52,16 @@ namespace Security.AcceptanceTests.Tests
         public async void MeWorksAsExpectedForBasic()
         {
             //given
-            userApiClient.UseNoCookiesApiClient();
+            accountApiClient.UseNoCookiesApiClient();
 
             RegisterUser existingRegisterUser = RandomRegisterUser();
-            SSOUser existingSSOUser = await userApiClient.RegisterAsync(existingRegisterUser);
+            SSOUser existingSSOUser = await registerApiClient.RegisterAsync(existingRegisterUser);
 
             Auth inputAuth = RandomAuth(existingRegisterUser);
 
             //when
-            userApiClient.AddBasicAuthentication(inputAuth);
-            SSOUser actualSSOUser = await userApiClient.Me();
+            ssoUserApiClient.AddBasicAuthentication(inputAuth);
+            SSOUser actualSSOUser = await ssoUserApiClient.Me();
 
             //then
             actualSSOUser.Should().BeEquivalentTo(existingSSOUser);

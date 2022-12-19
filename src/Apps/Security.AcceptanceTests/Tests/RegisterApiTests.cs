@@ -1,4 +1,5 @@
-﻿using Bogus;
+﻿using System;
+using Bogus;
 using Security.AcceptanceTests.Clients;
 using Security.Objects.DTOs;
 using System.Threading.Tasks;
@@ -7,16 +8,16 @@ using Xunit;
 namespace Security.AcceptanceTests.Tests
 {
     [Collection(nameof(AccountTestCollection))]
-    public partial class AccountApiTests
-    {
-        private readonly AccountApiClient accountApiClient;
+    public partial class RegisterApiTests
+	{
         private readonly RegisterApiClient registerApiClient;
+        private readonly AccountApiClient accountApiClient;
         private readonly SSOUserApiClient ssoUserApiClient;
 
-        public AccountApiTests(AccountApiClient userApiClient, RegisterApiClient registerApiClient, SSOUserApiClient ssoUserApiClient)
+        public RegisterApiTests(RegisterApiClient userApiClient, AccountApiClient accountApiClient, SSOUserApiClient ssoUserApiClient)
         {
-            this.accountApiClient = userApiClient;
-            this.registerApiClient = registerApiClient;
+            this.registerApiClient = userApiClient;
+            this.accountApiClient = accountApiClient;
             this.ssoUserApiClient = ssoUserApiClient;
         }
 
@@ -43,6 +44,7 @@ namespace Security.AcceptanceTests.Tests
         }
 
         async Task TearDownUserAsync(string userId)
-            => await accountApiClient.TearDown(userId);
+            => await registerApiClient.TearDown(userId);
     }
 }
+

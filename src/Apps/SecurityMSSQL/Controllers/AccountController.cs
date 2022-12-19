@@ -3,18 +3,16 @@ using Security.Objects.DTOs;
 using Security.Services.Services.Orchestration.Interfaces;
 using System.Threading.Tasks;
 
-namespace SecuritySQLite.Controllers
+namespace SecurityMSSQL.Controllers
 {
     [Route("/Api/Account")]
-    public partial class AccountController : Controller
+    public class AccountController : Controller
     {
-        readonly IAuthenticationOrchestrationService authenticationService;
-        private readonly ISSOUserOrchestrationService userManagerService;
+        private readonly IAuthenticationOrchestrationService authenticationService;
 
-        public AccountController(IAuthenticationOrchestrationService authenticationService, ISSOUserOrchestrationService userManagerService)
+        public AccountController(IAuthenticationOrchestrationService authenticationService)
         {
             this.authenticationService = authenticationService;
-            this.userManagerService = userManagerService;
         }
 
         [HttpPost("Login")]
@@ -29,12 +27,6 @@ namespace SecuritySQLite.Controllers
             await authenticationService.Logout();
             return Ok();
         }
-
-        [HttpPost("Register")]
-        public async ValueTask<IActionResult> Register([FromBody] RegisterUser registerForm)
-            => (ModelState.IsValid)
-                ? Ok(await userManagerService.Register(registerForm))
-                : BadRequest(ModelState);
 
         [HttpPost("ForgotPassword")]
         public async ValueTask<IActionResult> ChangePassword(string userId)

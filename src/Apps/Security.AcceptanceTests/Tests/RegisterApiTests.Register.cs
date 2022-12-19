@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Security.AcceptanceTests.Tests
 {
-    public partial class AccountApiTests
+    public partial class RegisterApiTests
     {
         [Fact]
         public async void ShouldRegisterAccountAsync()
@@ -25,7 +25,7 @@ namespace Security.AcceptanceTests.Tests
             };
 
             //when
-            SSOUser actualSSOUser = await userApiClient.RegisterAsync(inputRegisterUser);
+            SSOUser actualSSOUser = await registerApiClient.RegisterAsync(inputRegisterUser);
             expectedSSOUser.Id = actualSSOUser.Id;
             expectedSSOUser.PasswordHash = actualSSOUser.PasswordHash;
 

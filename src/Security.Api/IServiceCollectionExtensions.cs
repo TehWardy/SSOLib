@@ -87,7 +87,7 @@ namespace Security.UserManager
 
         public static void AddOrchestrations(this IServiceCollection services)
         {
-            services.AddTransient<ISSOUserOrchestrationService, SSOUserOrchestrationService>();
+            services.AddTransient<ISSOUserOrchestrationService, SSOUserRegistrationOrchestrationService>();
             services.AddTransient<ISSOAuthInfoOrchestrationService, SSOAuthInfoOrchestrationService>();
             services.AddTransient<IAuthenticationOrchestrationService, AuthenticationOrchestrationService>();
         }
