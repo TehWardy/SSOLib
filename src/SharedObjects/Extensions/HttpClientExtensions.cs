@@ -143,7 +143,11 @@ namespace SharedObjects.Extensions
             int page = 0;
             string fullQuery = query + (query.Contains('?') ? $"&$skip={page * BatchSize}&$top={BatchSize}" : $"?$skip={page * BatchSize}&$top={BatchSize}");
 
-            ODataCollection<T> batch = await client.GetAsync<ODataCollection<T>>(fullQuery);
+            var request = await client.GetAsync(fullQuery);
+
+            var responseContent = await request.Content.ReadAsStringAsync();
+
+            var batch = await request.Content.ReadAsAsync<ODataCollection<T>>();
 
             while (batch.Value.Any())
             {

@@ -11,4 +11,13 @@ namespace Security.AcceptanceTests.Tests
     {
 
     }
+
+    [CollectionDefinition(nameof(AuthTestCollection))]
+    public class AuthTestCollection :
+        ICollectionFixture<AccountApiClient>,
+        ICollectionFixture<RegisterApiClient>,
+        ICollectionFixture<SSOUserApiClient>
+    {
+
+    }
 }

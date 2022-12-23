@@ -39,6 +39,20 @@ namespace Security.AcceptanceTests.Clients
                 scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
         }
 
+        public HttpClient GetClient()
+            => webApplicationFactory.CreateClient();
+
+        public HttpClient UseNoCookiesApiClient()
+           => webApplicationFactory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        public async ValueTask<Token> LoginAsync(HttpClient client, Auth auth, string query = "")
+        {
+            var content = new StringContent(auth.ToJson(), Encoding.UTF8, "application/json");
+            var request = await client.PostAsync("/Api/Account/Login" + query, content);
+            request.EnsureSuccessStatusCode();
+            return await request.Content.ReadAsAsync<Token>();
+        }
+
         public async ValueTask<Token> LoginAsync(Auth auth, string query = "")
         {
             var content = new StringContent(auth.ToJson(), Encoding.UTF8, "application/json");
@@ -55,6 +69,14 @@ namespace Security.AcceptanceTests.Clients
                 api.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", bearer);
         }
 
+        public void AddBearerAuthentication(HttpClient client, string bearer)
+        {
+            if (bearer == null)
+                client.DefaultRequestHeaders.Authorization = null;
+            else
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", bearer);
+        }
+
         public void AddBasicAuthentication(Auth auth)
         {
             if (auth == null)
@@ -67,11 +89,26 @@ namespace Security.AcceptanceTests.Clients
             }
         }
 
+        public void AddBasicAuthentication(HttpClient client, Auth auth)
+        {
+            if (auth == null)
+                client.DefaultRequestHeaders.Authorization = null;
+            else
+            {
+                string encoded = System.Convert.ToBase64String(Encoding.UTF8.GetBytes(auth.User + ":" + auth.Pass));
+
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("basic", encoded);
+            }
+        }
+
         public async ValueTask<IEnumerable<SSOUser>> GetAllSSOUsersAsync(string query = "")
             => await api.GetODataCollection<SSOUser>(Endpoint + query);
 
         public async ValueTask<SSOUser> Me(string query = "")
             => await api.GetAsync<SSOUser>(Endpoint + "Me()" + query);
+
+        public async ValueTask<SSOUser> Me(HttpClient client, string query = "")
+            => await client.GetAsync<SSOUser>(Endpoint + "Me()" + query);
     }
 }
 

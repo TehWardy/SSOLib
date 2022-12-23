@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -26,6 +27,8 @@ namespace SecuritySQLite
                     _ = builder.SetIsOriginAllowed(origin => true);
                     _ = builder.AllowCredentials();
                 }));
+
+            services.AddControllers().AddOData(options => options.Select().Filter().OrderBy().SetMaxTop(1000));
         }
 
         public static void AddMetadata(this IServiceCollection services)

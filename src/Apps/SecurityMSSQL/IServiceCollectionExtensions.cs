@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
@@ -6,8 +7,6 @@ namespace SecurityMSSQL
 {
     public static partial class IServiceCollectionExtensions
     {
-        public static string SSOUserId = "TestUser1";
-
         public static void AddAspNetCore(this IServiceCollection services)
         {
             _ = services.AddResponseCompression();
@@ -25,6 +24,8 @@ namespace SecurityMSSQL
                     _ = builder.SetIsOriginAllowed(origin => true);
                     _ = builder.AllowCredentials();
                 }));
+
+            services.AddControllers().AddOData(options => options.Select().Filter().OrderBy().SetMaxTop(1000));
         }
 
         public static void AddMetadata(this IServiceCollection services)

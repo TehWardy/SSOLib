@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Net;
+using FluentAssertions;
 using Security.Objects.DTOs;
 using Security.Objects.Entities;
 using Xunit;
@@ -11,7 +12,7 @@ namespace Security.AcceptanceTests.Tests
         public async void MeWorksAsExpectedForBearerToken()
         {
             //given
-            accountApiClient.UseNoCookiesApiClient();
+            var client = ssoUserApiClient.UseNoCookiesApiClient();
 
             RegisterUser existingRegisterUser = RandomRegisterUser();
             SSOUser existingSSOUser = await registerApiClient.RegisterAsync(existingRegisterUser);
@@ -20,8 +21,8 @@ namespace Security.AcceptanceTests.Tests
             Token token = await accountApiClient.LoginAsync(inputAuth);
 
             //when
-            ssoUserApiClient.AddBearerAuthentication(token.Id);
-            SSOUser actualSSOUser = await ssoUserApiClient.Me();
+            ssoUserApiClient.AddBearerAuthentication(client, token.Id);
+            SSOUser actualSSOUser = await ssoUserApiClient.Me(client);
 
             //then
             actualSSOUser.Should().BeEquivalentTo(existingSSOUser);
@@ -33,14 +34,16 @@ namespace Security.AcceptanceTests.Tests
         public async void MeWorksAsExpectedForSession()
         {
             //given
+            var client = ssoUserApiClient.GetClient();
+
             RegisterUser existingRegisterUser = RandomRegisterUser();
             SSOUser existingSSOUser = await registerApiClient.RegisterAsync(existingRegisterUser);
 
             Auth inputAuth = RandomAuth(existingRegisterUser);
-            Token token = await ssoUserApiClient.LoginAsync(inputAuth);
+            Token token = await ssoUserApiClient.LoginAsync(client, inputAuth);
 
             //when
-            SSOUser actualSSOUser = await ssoUserApiClient.Me();
+            SSOUser actualSSOUser = await ssoUserApiClient.Me(client);
 
             //then
             actualSSOUser.Should().BeEquivalentTo(existingSSOUser);
@@ -52,7 +55,7 @@ namespace Security.AcceptanceTests.Tests
         public async void MeWorksAsExpectedForBasic()
         {
             //given
-            accountApiClient.UseNoCookiesApiClient();
+            var client = ssoUserApiClient.UseNoCookiesApiClient();
 
             RegisterUser existingRegisterUser = RandomRegisterUser();
             SSOUser existingSSOUser = await registerApiClient.RegisterAsync(existingRegisterUser);
@@ -60,8 +63,8 @@ namespace Security.AcceptanceTests.Tests
             Auth inputAuth = RandomAuth(existingRegisterUser);
 
             //when
-            ssoUserApiClient.AddBasicAuthentication(inputAuth);
-            SSOUser actualSSOUser = await ssoUserApiClient.Me();
+            ssoUserApiClient.AddBasicAuthentication(client, inputAuth);
+            SSOUser actualSSOUser = await ssoUserApiClient.Me(client);
 
             //then
             actualSSOUser.Should().BeEquivalentTo(existingSSOUser);
