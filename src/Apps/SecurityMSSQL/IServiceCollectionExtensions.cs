@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Security.Api.OData;
 
 namespace SecurityMSSQL
 {
@@ -25,7 +26,14 @@ namespace SecurityMSSQL
                     _ = builder.AllowCredentials();
                 }));
 
-            services.AddControllers().AddOData(options => options.Select().Filter().OrderBy().SetMaxTop(1000));
+            services.AddControllers()
+               .AddOData(opt =>
+               {
+                   opt.RouteOptions.EnableQualifiedOperationCall = false;
+                   opt.EnableAttributeRouting = true;
+                   _ = opt.Expand().Count().Filter().Select().OrderBy().SetMaxTop(1000);
+                   opt.AddRouteComponents($"/Api/Security", new SecurityModelBuilder().Build().EDMModel);
+               });
         }
 
         public static void AddMetadata(this IServiceCollection services)

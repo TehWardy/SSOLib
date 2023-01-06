@@ -14,13 +14,13 @@
 
 	<PropertyGroup Condition=" '$(RunConfiguration)' == 'Security' " />
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.11" />
+		<PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.12" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="6.1.0" />
 		<PackageReference Include="RESTFulSense" Version="2.9.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
