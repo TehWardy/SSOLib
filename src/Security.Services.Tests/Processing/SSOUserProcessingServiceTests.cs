@@ -44,6 +44,7 @@ namespace Security.Services.Tests.Processing
 		{
 			var filler = new Filler<SSOUser>();
 			filler.Setup()
+				.OnProperty(p => p.LockoutEnabled).Use(false)
 				.OnProperty(p => p.Roles).IgnoreIt()
 				.OnProperty(p => p.Tokens).IgnoreIt()
 				.OnProperty(p => p.UserEvents).IgnoreIt();
