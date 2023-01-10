@@ -4,12 +4,8 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>SSOLib</Title>
-		<Version>1.0.4</Version>
-		<AssemblyVersion>1.0.4</AssemblyVersion>
-		<IsPackable>true</IsPackable>
-		<FileVersion>1.0.4</FileVersion>
+	    <IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(RunConfiguration)' == 'Security' " />
