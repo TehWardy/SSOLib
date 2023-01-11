@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Security.AcceptanceTests.Exceptions;
 using Security.Data.EF;
 using Security.Objects.Entities;
+using SecuritySQLite;
 using SharedObjects.Extensions;
 using SSO.AcceptanceTests;
 using System.Collections.Generic;
@@ -33,16 +33,16 @@ namespace B2B.AcceptanceTests.Masterdata.Clients
             => await Api.GetODataCollection<Tenant>(Endpoint);
 
         public async ValueTask<Tenant> GetTenantById(string id, string query = "")
-            => await Api.GetAsync<Tenant>($"{Endpoint}({id}){query}");
+            => await Api.GetAsync<Tenant>($"{Endpoint}('{id}'){query}");
 
         public async ValueTask<Tenant> AddTenantAsync(Tenant tenant)
             => await Api.AddAsync(Endpoint, tenant);
         public async ValueTask<Tenant> UpdateTenantAsync(Tenant tenant)
-            => await Api.UpdateAsync($"{Endpoint}({tenant.Id})", tenant);
+            => await Api.UpdateAsync($"{Endpoint}('{tenant.Id}')", tenant);
 
         public async ValueTask DeleteTenantAsync(string id)
         {
-            var response = await Api.DeleteAsync($"{Endpoint}({id})");
+            var response = await Api.DeleteAsync($"{Endpoint}('{id}')");
             if ((int)response.StatusCode == 500)
                 throw new InternalServerErrorException(await response.Content.ReadAsStringAsync());
 

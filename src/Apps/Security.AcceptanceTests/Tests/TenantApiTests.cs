@@ -7,7 +7,7 @@ using Xunit;
 namespace Security.AcceptanceTests.Tests
 {
     [Collection(nameof(TenantTestCollection))]
-    public partial class TenantApiTests
+    public partial class TenantApiTests : IClassFixture<TenantApiClient>
     {
         private readonly TenantApiClient client;
 
