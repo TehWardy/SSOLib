@@ -1,4 +1,5 @@
 ﻿using Moq;
+using Security.Data.Brokers.Authentication;
 using Security.Objects.Entities;
 using Security.Services.Services.Foundation.Interfaces;
 using Security.Services.Services.Processing;
@@ -12,12 +13,14 @@ namespace Security.Services.Tests.Processing
     public partial class TenantProcessingServiceTests
     {
         private readonly Mock<ITenantService> tenantServiceMock;
+        private readonly Mock<IIdentityBroker> identityBrokerMock;
         private readonly ITenantProcessingService tenantProcessingService;
 
         public TenantProcessingServiceTests()
         {
             tenantServiceMock = new Mock<ITenantService>();
-            tenantProcessingService = new TenantProcessingService(tenantServiceMock.Object);
+            identityBrokerMock= new Mock<IIdentityBroker>();
+            tenantProcessingService = new TenantProcessingService(tenantServiceMock.Object, identityBrokerMock.Object);
         }
 
         public Tenant[] RandomTenants()
@@ -27,6 +30,9 @@ namespace Security.Services.Tests.Processing
 
         public Tenant RandomTenant()
             => GetTenantFiller().Create();
+
+        static public string RandomString()
+            => new MnemonicString().GetValue();
 
         public Filler<Tenant> GetTenantFiller()
         {
