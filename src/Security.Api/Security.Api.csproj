@@ -7,10 +7,10 @@
 	<OutputType>Library</OutputType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<Title>SSOLib</Title>
-	<Version>1.0.4</Version>
-	<AssemblyVersion>1.0.4</AssemblyVersion>
+	<Version>1.0.6</Version>
+	<AssemblyVersion>1.0.6</AssemblyVersion>
 	<IsPackable>true</IsPackable>
-	<FileVersion>1.0.4</FileVersion>
+	<FileVersion>1.0.6</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -22,10 +22,7 @@
     <ProjectReference Include="..\Security.Services\Security.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DTOs\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.12" />
     <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.12" />
   </ItemGroup>
 </Project>
