@@ -22,8 +22,8 @@ namespace Security.Services.Services.Processing
         {
             var user = identityBroker.Me();
 
-/*            item.CreatedBy = user.Id;
-            item.LastUpdatedBy= user.Id;*/
+            item.CreatedBy = user.Id;
+            item.LastUpdatedBy= user.Id;
 
             return tenantService.AddTenantAsync(item);
         }
