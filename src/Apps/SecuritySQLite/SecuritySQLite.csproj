@@ -35,7 +35,4 @@
 	  <ProjectReference Include="..\..\Security.Api\Security.Api.csproj" />
 	  <ProjectReference Include="..\..\Security.Data.EF.SQLite\Security.Data.EF.SQLite.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Controllers\" />
-	</ItemGroup>
 </Project>
