@@ -1,4 +1,5 @@
-﻿using Security.AcceptanceTests.Clients;
+﻿using B2B.AcceptanceTests.Masterdata.Clients;
+using Security.AcceptanceTests.Clients;
 using Xunit;
 
 namespace Security.AcceptanceTests.Tests
@@ -17,6 +18,13 @@ namespace Security.AcceptanceTests.Tests
         ICollectionFixture<AccountApiClient>,
         ICollectionFixture<RegisterApiClient>,
         ICollectionFixture<SSOUserApiClient>
+    {
+
+    }
+
+    [CollectionDefinition(nameof(TenantTestCollection))]
+    public class TenantTestCollection : 
+        ICollectionFixture<TenantApiClient>
     {
 
     }
