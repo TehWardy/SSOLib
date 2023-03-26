@@ -1,7 +1,7 @@
 ﻿using Moq;
-using Security.Services.Services.Orchestration;
-using Security.Services.Services.Orchestration.Interfaces;
-using Security.Services.Services.Processing.Interfaces;
+using Security.Services.Orchestration;
+using Security.Services.Orchestration.Interfaces;
+using Security.Services.Processing.Interfaces;
 using Tynamix.ObjectFiller;
 
 namespace Security.Services.Tests.Orchestration

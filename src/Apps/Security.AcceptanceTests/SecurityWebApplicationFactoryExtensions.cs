@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Security.Data.Brokers.Encryption;
 using Security.Data.EF;
@@ -22,9 +21,7 @@ namespace SSO.AcceptanceTests
                 var scopedServices = scope.ServiceProvider;
                 var encryptionBroker = scopedServices.GetService<IPasswordEncryptionBroker>();
 
-                using var db = new SSODbContext(
-                    scopedServices.GetRequiredService<IConfiguration>(),
-                    scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
+                using var db = new SSODbContext(scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
                 db.Database.EnsureCreated();
                 SeedTestData(db, encryptionBroker);
             }

@@ -1,21 +1,20 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
-using Security.Data.EF;
-using System.Net.Http;
-using SecuritySQLite;
-using SSO.AcceptanceTests;
-using SharedObjects.Extensions;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Security.Objects.Entities;
-using System.Threading.Tasks;
+using Security.Data.EF;
 using Security.Objects.DTOs;
-using System.Text;
+using Security.Objects.Entities;
+using SecuritySQLite;
+using SharedObjects.Extensions;
+using SSO.AcceptanceTests;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Security.AcceptanceTests.Clients
 {
-	public class SSOUserApiClient
+    public class SSOUserApiClient
 	{
         readonly WebApplicationFactory<Program> webApplicationFactory;
         HttpClient api;
@@ -34,30 +33,21 @@ namespace Security.AcceptanceTests.Clients
             using var scope = webApplicationFactory.Services.CreateScope();
             var scopedServices = scope.ServiceProvider;
 
-            Database = new SSODbContext(
-                scopedServices.GetRequiredService<IConfiguration>(),
-                scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
+            Database = new SSODbContext(scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
         }
 
-        public HttpClient GetClient()
-            => webApplicationFactory.CreateClient();
-
-        public HttpClient UseNoCookiesApiClient()
-           => webApplicationFactory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-
-        public async ValueTask<Token> LoginAsync(HttpClient client, Auth auth, string query = "")
-        {
-            var content = new StringContent(auth.ToJson(), Encoding.UTF8, "application/json");
-            var request = await client.PostAsync("/Api/Account/Login" + query, content);
-            request.EnsureSuccessStatusCode();
-            return await request.Content.ReadAsAsync<Token>();
-        }
-
-        public async ValueTask<Token> LoginAsync(Auth auth, string query = "")
+        public async ValueTask<Token> LoginAsync(Auth auth, string query = "", bool keepSessionCookie = false)
         {
             var content = new StringContent(auth.ToJson(), Encoding.UTF8, "application/json");
             var request = await api.PostAsync("/Api/Account/Login" + query, content);
             request.EnsureSuccessStatusCode();
+
+            if (keepSessionCookie)
+            {
+                var cookie = request.RequestMessage.Headers.GetValues("Cookie").First();
+                api.DefaultRequestHeaders.Append(new KeyValuePair<string, IEnumerable<string>>(".AspNetSession", new[] { cookie }));
+            }
+
             return await request.Content.ReadAsAsync<Token>();
         }
 
@@ -67,14 +57,6 @@ namespace Security.AcceptanceTests.Clients
                 api.DefaultRequestHeaders.Authorization = null;
             else
                 api.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", bearer);
-        }
-
-        public void AddBearerAuthentication(HttpClient client, string bearer)
-        {
-            if (bearer == null)
-                client.DefaultRequestHeaders.Authorization = null;
-            else
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", bearer);
         }
 
         public void AddBasicAuthentication(Auth auth)
@@ -89,26 +71,11 @@ namespace Security.AcceptanceTests.Clients
             }
         }
 
-        public void AddBasicAuthentication(HttpClient client, Auth auth)
-        {
-            if (auth == null)
-                client.DefaultRequestHeaders.Authorization = null;
-            else
-            {
-                string encoded = System.Convert.ToBase64String(Encoding.UTF8.GetBytes(auth.User + ":" + auth.Pass));
-
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("basic", encoded);
-            }
-        }
-
         public async ValueTask<IEnumerable<SSOUser>> GetAllSSOUsersAsync(string query = "")
             => await api.GetODataCollection<SSOUser>(Endpoint + query);
 
         public async ValueTask<SSOUser> Me(string query = "")
             => await api.GetAsync<SSOUser>(Endpoint + "Me()" + query);
-
-        public async ValueTask<SSOUser> Me(HttpClient client, string query = "")
-            => await client.GetAsync<SSOUser>(Endpoint + "Me()" + query);
     }
 }
 

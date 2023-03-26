@@ -1,21 +1,20 @@
-﻿using System;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
 using Security.Objects;
 using Security.Objects.Entities;
+using System;
+using System.Linq;
 
 namespace Security.Data.EF
 {
-	public class IdentitySSODbContext : SSODbContext
+    public class IdentitySSODbContext : SSODbContext
 	{
         public ISSOAuthInfo AuthInfo { get; }
 
         bool UserIsPortalAdmin => GetCurrentUser().Roles.Any(r => r.Role.UsersArePortalAdmins);
         SSOUser currentUser;
 
-        public IdentitySSODbContext(IConfiguration configuration, ISSOAuthInfo authInfo, ISecurityModelBuildProvider modelBuildProvider)
-            : base(configuration, modelBuildProvider)
+        public IdentitySSODbContext(ISSOAuthInfo authInfo, ISecurityModelBuildProvider modelBuildProvider)
+            : base(modelBuildProvider)
         {
             this.AuthInfo = authInfo;
         }

@@ -26,10 +26,10 @@ namespace Security.Data.EF
             if(ignoreFilters)
             {
                 var authInfo = provider.GetService<ISSOAuthInfo>();
-                return new IdentitySSODbContext(configuration, authInfo, modelBuildProvider);
+                return new IdentitySSODbContext(authInfo, modelBuildProvider);
             }
 
-            return new SSODbContext(configuration, modelBuildProvider);
+            return new SSODbContext(modelBuildProvider);
         }
     }
 }

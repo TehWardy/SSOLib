@@ -9,11 +9,11 @@ namespace Security.Data.Brokers.Serialization
 		{
 		}
 
-		public T Deserialize<T>(string input)
-			=> SharedObjects.Data.ParseJson<T>(input);
+		public T Deserialize<T>(string input) => 
+			SharedObjects.Data.ParseJson<T>(input);
 
-		public string Serialize(object obj)
-			=> obj.ToJson();
+		public string Serialize(object obj) => 
+			obj.ToJson();
 	}
 }
 

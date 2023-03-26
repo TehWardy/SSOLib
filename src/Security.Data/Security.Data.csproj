@@ -4,35 +4,29 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<Title>SSOLib</Title>
-	<Version>1.0.6</Version>
-	<AssemblyVersion>1.0.6</AssemblyVersion>
-	<IsPackable>true</IsPackable>
-	<FileVersion>1.0.6</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="EFxceptions" Version="0.4.5" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="SharedObjects" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Security.Data.EF\Security.Data.EF.csproj" />
     <ProjectReference Include="..\Security.Objects\Security.Objects.csproj" />
     <ProjectReference Include="..\Security.Data.EF.MSSQL\Security.Data.EF.MSSQL.csproj" />
-    <ProjectReference Include="..\SharedObjects\SharedObjects.csproj" />
     <ProjectReference Include="..\Security.Data.EF.SQLite\Security.Data.EF.SQLite.csproj" />
   </ItemGroup>
 

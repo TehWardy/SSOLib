@@ -2,7 +2,6 @@
 using Force.DeepCloner;
 using Moq;
 using Security.Objects.Entities;
-using System;
 using Xunit;
 
 namespace Security.Services.Tests.Processing
@@ -15,18 +14,10 @@ namespace Security.Services.Tests.Processing
             //given
             Tenant inputTenant = RandomTenant();
             Tenant expectedTenant = inputTenant.DeepClone();
-            string userId = RandomString();
-
-            expectedTenant.CreatedBy = userId;
-            expectedTenant.LastUpdatedBy = userId;
-
-            identityBrokerMock.Setup(identityBrokerMock => 
-                identityBrokerMock.Me())
-                .Returns(new SSOUser { Id = userId });
 
             tenantServiceMock.Setup(tenantServiceMock =>
                 tenantServiceMock.AddTenantAsync(inputTenant))
-                .ReturnsAsync(inputTenant);
+                .ReturnsAsync(expectedTenant);
 
             //when
             Tenant actualTenant = await tenantProcessingService.AddTenantAsync(inputTenant);

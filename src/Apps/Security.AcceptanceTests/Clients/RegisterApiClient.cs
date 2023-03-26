@@ -1,26 +1,25 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
-using Security.Data.EF;
-using System.Net.Http;
-using SecuritySQLite;
-using SSO.AcceptanceTests;
-using SharedObjects.Extensions;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Security.AcceptanceTests.Exceptions;
+using Security.Data.EF;
 using Security.Objects.DTOs;
 using Security.Objects.Entities;
+using SecuritySQLite;
+using SharedObjects.Extensions;
+using SSO.AcceptanceTests;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace Security.AcceptanceTests.Clients
 {
-	public class RegisterApiClient
+    public class RegisterApiClient
 	{
         readonly WebApplicationFactory<Program> webApplicationFactory;
-        HttpClient api;
+        readonly HttpClient api;
+
         public SSODbContext Database { get; set; }
 
         const string endpoint = "Api/Register/";
@@ -36,9 +35,7 @@ namespace Security.AcceptanceTests.Clients
             using var scope = webApplicationFactory.Services.CreateScope();
             var scopedServices = scope.ServiceProvider;
 
-            Database = new SSODbContext(
-                scopedServices.GetRequiredService<IConfiguration>(),
-                scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
+            Database = new SSODbContext(scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
         }
 
         public async ValueTask PostAsync(string query, object content)

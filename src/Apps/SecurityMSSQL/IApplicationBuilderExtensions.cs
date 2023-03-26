@@ -23,6 +23,7 @@ namespace SecurityMSSQL
             app.UseStaticFiles();
 
             // setup OData
+            app.UseODataBatching();
             app.UseHttpsRedirection();
             app.UseRouting();
 

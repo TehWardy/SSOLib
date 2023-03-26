@@ -1,0 +1,66 @@
+trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: 'src/CI.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  vstsFeed: 'ef0ec01d-ca78-4a45-b436-d15c2cb7d442/357f07e2-1d5e-49e3-b6e9-afeca369ffdb'
+
+name: '$(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)'
+
+steps:
+
+  - task: Powershell@2
+    displayName: 'Apply Build Version'
+    inputs: 
+      targetType: 'inline'
+      script: |
+        $version = '7.0.' + "$env:Build_BuildNumber"
+        $pattern = '\[assembly: AssemblyVersion\("(.*)"\)\]'
+        $AssemblyFiles = Get-ChildItem . AssemblyInfo.cs -rec
+
+        foreach ($file in $AssemblyFiles)
+        {
+          (Get-Content $file.PSPath) | ForEach-Object
+          {
+              if($_ -match $pattern)
+              {
+                  '[assembly: AssemblyVersion("{0}")]' -f $version
+              } else 
+              {
+                  $_
+              }
+          } | Set-Content $file.PSPath
+        }
+
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core sdk'
+    inputs:
+      packageType: 'sdk'
+      version: '7.0.x'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Restore packages'
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+      feedsToUse: 'select'
+      vstsFeed: '$(vstsFeed)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Build and pack'
+    inputs:
+      command: 'pack'
+      arguments: '--configuration $(buildConfiguration) $(solution)'
+      versioningScheme: byBuildNumber
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Push to Azure DevOps Artifacts'
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '$(vstsFeed)'

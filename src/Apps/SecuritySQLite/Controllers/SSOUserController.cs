@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Security.Services.Services.Processing.Interfaces;
+using Security.Services.Processing.Interfaces;
 
 namespace SecuritySQLite.Controllers
 {
-	public class SSOUserController : ODataController
+    [Route("Api/Security/SSOUser")]
+	public class SSOUserController : Controller
 	{
         private readonly ISSOUserProcessingService ssoUserProcessingService;
 
@@ -21,7 +21,7 @@ namespace SecuritySQLite.Controllers
 
         [HttpGet]
         [EnableQuery]
-        public IActionResult Get()
+        public IActionResult GetAllSSOUsers()
             => Ok(ssoUserProcessingService.GetAllSSOUsers(ignoreFilters: false));
     }
 }

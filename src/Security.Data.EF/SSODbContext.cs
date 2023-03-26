@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Security.Objects;
+﻿using Microsoft.EntityFrameworkCore;
 using Security.Objects.Entities;
+using System.Linq;
 
 namespace Security.Data.EF
 {
@@ -20,17 +18,13 @@ namespace Security.Data.EF
         public DbSet<Session> Sessions { get; set; }
         public DbSet<UserEvent> UserEvents { get; set; }
 
-        readonly IConfiguration configuration;
         readonly ISecurityModelBuildProvider modelBuildProvider;
 
-        public SSODbContext(IConfiguration configuration, ISecurityModelBuildProvider modelBuildProvider)
-        {
-            this.configuration = configuration;
+        public SSODbContext(ISecurityModelBuildProvider modelBuildProvider) =>
             this.modelBuildProvider = modelBuildProvider;
-        }
 
-        public void Migrate()
-            => modelBuildProvider.MigrateDatabase(Database);
+        public void Migrate() => 
+            modelBuildProvider.MigrateDatabase(Database);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,11 +32,11 @@ namespace Security.Data.EF
             modelBuildProvider.Create(modelBuilder);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => modelBuildProvider.Configure(configuration, optionsBuilder);
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
+            modelBuildProvider.Configure(optionsBuilder);
 
-        public IQueryable<UserActivity> GetUserActivity() 
-            => UserEvents.IgnoreQueryFilters()
+        public IQueryable<UserActivity> GetUserActivity() => 
+            UserEvents.IgnoreQueryFilters()
                 .Select(ue => new UserActivity
                 {
                     // tenant details

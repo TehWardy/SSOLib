@@ -2,8 +2,8 @@
 using Security.Data.Brokers.DateTime;
 using Security.Data.Brokers.Storage.Interfaces;
 using Security.Objects.Entities;
-using Security.Services.Services.Foundation;
-using Security.Services.Services.Foundation.Interfaces;
+using Security.Services.Foundation;
+using Security.Services.Foundation.Interfaces;
 using System;
 using System.Linq;
 using Tynamix.ObjectFiller;

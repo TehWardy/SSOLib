@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
 using FizzWare.NBuilder;
 using Moq;
 using Security.Data.Brokers.Storage.Interfaces;
 using Security.Objects.Entities;
 using Security.Services.Foundation;
-using Security.Services.Services.Foundation.Interfaces;
+using Security.Services.Foundation.Interfaces;
+using System;
+using System.Linq;
 
 namespace Security.Services.Tests.Foundation
 {

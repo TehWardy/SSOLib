@@ -22,6 +22,8 @@ namespace SecuritySQLite
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            // setup OData
+            app.UseODataBatching();
             app.UseHttpsRedirection();
             app.UseRouting();
 

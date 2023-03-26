@@ -1,22 +1,20 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Security.Data.Brokers.Requests
 {
-	public class HttpRequestBroker : IHttpRequestBroker
+    public class HttpRequestBroker : IHttpRequestBroker
 	{
         private readonly HttpRequest request;
 
-        public HttpRequestBroker(HttpRequest request)
-		{
+        public HttpRequestBroker(HttpRequest request) =>
             this.request = request;
-        }
 
-        public bool HasHeader(string headerValue)
-            => request.Headers.ContainsKey(headerValue);
+        public bool HasHeader(string headerValue) => 
+            request?.Headers.ContainsKey(headerValue) ?? false;
 
-        public string Header(string key)
-            => request.Headers[key].ToString();
+        public string Header(string key) => 
+            request?.Headers.ContainsKey(key) ?? false
+                ? request?.Headers[key].ToString() 
+                : null;
     }
 }
-

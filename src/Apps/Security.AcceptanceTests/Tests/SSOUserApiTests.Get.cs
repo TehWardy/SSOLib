@@ -1,7 +1,8 @@
-﻿using FluentAssertions;
-using Security.Objects.Entities;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
+using Security.Objects.Entities;
 using Xunit;
 
 namespace Security.AcceptanceTests.Tests
@@ -21,11 +22,7 @@ namespace Security.AcceptanceTests.Tests
 			IEnumerable<SSOUser> actualSSOUsers = await ssoUserApiClient.GetAllSSOUsersAsync();
 
 			//then
-			foreach (var expectedUser in expectedSSOUsers)
-			{
-				SSOUser actualUser = actualSSOUsers.FirstOrDefault(u => u.Id == expectedUser.Id);
-				actualUser.Should().BeEquivalentTo(expectedUser);      
-			}
+			actualSSOUsers.Should().Contain(expectedSSOUsers);
 
 			foreach (var ssoUser in expectedSSOUsers)
 				await registerApiClient.TearDown(ssoUser.Id);

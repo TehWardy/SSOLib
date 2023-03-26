@@ -4,13 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
-	<OutputType>Library</OutputType>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<Title>SSOLib</Title>
-	<Version>1.0.6</Version>
-	<AssemblyVersion>1.0.6</AssemblyVersion>
-	<IsPackable>true</IsPackable>
-	<FileVersion>1.0.6</FileVersion>
+	  <OutputType>Library</OutputType>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -22,7 +17,6 @@
     <ProjectReference Include="..\Security.Services\Security.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="7.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="7.0.0" />
   </ItemGroup>
 </Project>

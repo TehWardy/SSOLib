@@ -1,54 +1,41 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Security.Api.DTOs;
-using Security.Data;
+using Security.Api;
 using Security.Data.Brokers.Authentication;
-using Security.Data.Brokers.DateTime;
-using Security.Data.Brokers.Encryption;
 using Security.Data.Brokers.Requests;
 using Security.Data.Brokers.Serialization;
 using Security.Data.Brokers.Storage;
 using Security.Data.Brokers.Storage.Interfaces;
 using Security.Data.EF;
 using Security.Data.EF.Interfaces;
-using Security.Data.Interfaces;
-using Security.Objects;
 using Security.Services.Foundation;
 using Security.Services.Foundation.Interfaces;
+using Security.Services.Orchestration;
+using Security.Services.Orchestration.Interfaces;
 using Security.Services.Processing;
-using Security.Services.Services.Foundation;
-using Security.Services.Services.Foundation.Interfaces;
-using Security.Services.Services.Orchestration;
-using Security.Services.Services.Orchestration.Interfaces;
-using Security.Services.Services.Processing;
-using Security.Services.Services.Processing.Interfaces;
-using Security.UserManager.Services.Foundation;
-using Security.UserManager.Services.Processing;
+using Security.Services.Processing.Interfaces;
+using System;
 
 namespace Security.UserManager
 {
     public static class IServiceCollectionExtensions
     {
-        public static void AddSecurity(this IServiceCollection services, IConfiguration configuration, Action<SecurityBuilderOptions> dbSetupAction)
+        public static void AddSecurity(this IServiceCollection services, Action<SecurityBuilderOptions> configAction)
         {
-            var builderOptions = new SecurityBuilderOptions(services, configuration);
-            dbSetupAction(builderOptions);
-            builderOptions.Build();
-
-            services.AddDbContextPool<SSODbContext>(opt => { });
-            services.AddDbContextFactory<SSODbContext>();
             services.AddTransient<ISSODbContextFactory, SSODbContextFactory>();
-            services.AddTransient<ISSOAuthInfo>((IServiceProvider provider)
-                => provider.GetService<ISSOAuthInfoOrchestrationService>().GetSSOAuthInfo()
-            );
+
+            services.AddTransient((IServiceProvider provider) => 
+                provider.GetService<ISSOAuthInfoOrchestrationService>().GetSSOAuthInfo());
+
             services.AddBrokers();
             services.AddFoundations();
             services.AddProcessings();
             services.AddOrchestrations();
 
             services.AddAspNet();
+
+            var builderOptions = new SecurityBuilderOptions(services);
+            configAction(builderOptions);
         }
 
         public static void AddBrokers(this IServiceCollection services)
@@ -66,7 +53,6 @@ namespace Security.UserManager
 
             services.AddTransient<IIdentityBroker, IdentityBroker>();
             services.AddTransient<ISerializationBroker, SerializationBroker>();
-            services.AddTransient<ISecurityDateTimeOffsetBroker, SecurityDateTimeOffsetBroker>();
         }
 
         public static void AddFoundations(this IServiceCollection services)
@@ -77,8 +63,6 @@ namespace Security.UserManager
             services.AddTransient<ISSORoleService, SSORoleService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<ISessionService, SessionService>();
-            services.AddTransient<ITenantService, TenantService>();
-            services.AddTransient<IUserEventService, UserEventService>();
         }
 
         public static void AddProcessings(this IServiceCollection services)
@@ -89,8 +73,6 @@ namespace Security.UserManager
             services.AddTransient<ISSORoleProcessingService, SSORoleProcessingService>();
             services.AddTransient<ITokenProcessingService, TokenProcessingService>();
             services.AddTransient<ISessionProcessingService, SessionProcessingService>();
-            services.AddTransient<ITenantProcessingService, TenantProcessingService>();
-            services.AddTransient<IUserEventProcessingService, UserEventProcessingService>();
         }
 
         public static void AddOrchestrations(this IServiceCollection services)

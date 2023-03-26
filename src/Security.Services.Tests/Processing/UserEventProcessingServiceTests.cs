@@ -1,8 +1,8 @@
 ﻿using Moq;
 using Security.Objects.Entities;
-using Security.Services.Services.Foundation.Interfaces;
-using Security.Services.Services.Processing;
-using Security.Services.Services.Processing.Interfaces;
+using Security.Services.Foundation.Interfaces;
+using Security.Services.Processing;
+using Security.Services.Processing.Interfaces;
 using System;
 using System.Linq;
 using Tynamix.ObjectFiller;

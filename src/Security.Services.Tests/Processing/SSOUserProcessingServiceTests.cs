@@ -1,18 +1,17 @@
-﻿using FizzWare.NBuilder;
-using System;
-using Moq;
+﻿using Moq;
 using Security.Data.Brokers.Authentication;
 using Security.Data.Brokers.Encryption;
 using Security.Objects.Entities;
+using Security.Services.Foundation.Interfaces;
 using Security.Services.Processing;
-using Security.Services.Services.Foundation.Interfaces;
-using Security.Services.Services.Processing.Interfaces;
-using Tynamix.ObjectFiller;
+using Security.Services.Processing.Interfaces;
+using System;
 using System.Linq;
+using Tynamix.ObjectFiller;
 
 namespace Security.Services.Tests.Processing
 {
-	public partial class SSOUserProcessingServiceTests
+    public partial class SSOUserProcessingServiceTests
 	{
 		private readonly Mock<IIdentityBroker> identityBrokerMock;
 		private readonly Mock<IPasswordEncryptionBroker> passwordEncryptionBrokerMock;
@@ -44,7 +43,6 @@ namespace Security.Services.Tests.Processing
 		{
 			var filler = new Filler<SSOUser>();
 			filler.Setup()
-				.OnProperty(p => p.LockoutEnabled).Use(false)
 				.OnProperty(p => p.Roles).IgnoreIt()
 				.OnProperty(p => p.Tokens).IgnoreIt()
 				.OnProperty(p => p.UserEvents).IgnoreIt();

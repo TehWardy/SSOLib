@@ -1,13 +1,16 @@
-﻿using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Configuration;
-using Security.Objects.Entities;
+using System.Linq;
 
 namespace Security.Data.EF.MSSQL;
 
 public partial class SecuritySQLiteModelBuildProvider : ISecurityModelBuildProvider
 {
+    private readonly string connectionString;
+
+    public SecuritySQLiteModelBuildProvider(string connectionString) =>
+        this.connectionString = connectionString;
+
     public void MigrateDatabase(DatabaseFacade database)
         => database.Migrate();
 
@@ -23,10 +26,6 @@ public partial class SecuritySQLiteModelBuildProvider : ISecurityModelBuildProvi
             relationship.DeleteBehavior = DeleteBehavior.Restrict;
     }
 
-    public void Configure(IConfiguration configuration, DbContextOptionsBuilder optionsBuilder)
-    {
-        string connectionString = configuration.GetConnectionString("SSO");
+    public void Configure(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder.UseSqlite(connectionString, b => b.MigrationsAssembly("Security.Data.EF.SQLite"));
-    }
 }
-

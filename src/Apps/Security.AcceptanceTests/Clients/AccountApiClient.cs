@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Security.AcceptanceTests.Exceptions;
-using Security.Data.Brokers.Encryption;
 using Security.Data.EF;
 using Security.Objects.DTOs;
 using Security.Objects.Entities;
@@ -14,7 +12,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Security.AcceptanceTests.Clients
 {
@@ -37,9 +34,7 @@ namespace Security.AcceptanceTests.Clients
             using var scope = webApplicationFactory.Services.CreateScope();
             var scopedServices = scope.ServiceProvider;
 
-            Database = new SSODbContext(
-                scopedServices.GetRequiredService<IConfiguration>(),
-                scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
+            Database = new SSODbContext(scopedServices.GetRequiredService<ISecurityModelBuildProvider>());
         }
 
         public HttpClient UseNoCookiesApiClient()

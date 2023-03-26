@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Security.Objects.Entities;
 
 namespace Security.Data.EF.MSSQL;

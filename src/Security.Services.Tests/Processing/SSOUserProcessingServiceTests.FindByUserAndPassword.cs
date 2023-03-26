@@ -1,14 +1,13 @@
 ﻿using FluentAssertions;
-using System;
-using System.Linq;
-using Security.Objects.Entities;
 using Moq;
-using Xunit;
+using Security.Objects.Entities;
+using System.Linq;
 using System.Security;
+using Xunit;
 
 namespace Security.Services.Tests.Processing
 {
-	public partial class SSOUserProcessingServiceTests
+    public partial class SSOUserProcessingServiceTests
 	{
 		[Fact]
 		public void FindByUserAndPasswordWorksAsExpected()
